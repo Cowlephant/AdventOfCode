@@ -62,10 +62,10 @@ namespace AdventOfCode
 
 				foreach (var (answer, index) in answers.Select((a, i) => (a, i)))
 				{
-					string expectedAnswerResult = ValidateExpectedAnswer(
+					string answerResult = ValidateExpectedAnswer(
 						answers, dayRunner, "RunPartOne", answer, index);
 
-					Console.WriteLine($"\t\tDataset {index + 1} Answer: {expectedAnswerResult}{answer}");
+					Console.WriteLine($"\t\tDataset {index + 1} Answer: {answerResult}");
 				}
 			}
 			if (RunnerSettings.RunPartTwo)
@@ -76,10 +76,10 @@ namespace AdventOfCode
 
 				foreach (var (answer, index) in answers.Select((a, i) => (a, i)))
 				{
-					string expectedAnswerResult = ValidateExpectedAnswer(
+					string answerResult = ValidateExpectedAnswer(
 						answers, dayRunner, "RunPartTwo", answer, index);
 
-					Console.WriteLine($"\t\tDataset {index + 1} Answer: {expectedAnswerResult}{answer}");
+					Console.WriteLine($"\t\tDataset {index + 1} Answer: {answerResult}");
 				}
 			}
 
@@ -102,11 +102,13 @@ namespace AdventOfCode
 						$"Answers: {answerCount} ExpectedAnswers: {expectedAnswerCount}");
 				}
 
-				bool isExpectedAnswerCorrect = answer == expectedAnswers[index];
+				string expectedanswer = expectedAnswers[index];
+				bool isExpectedAnswerCorrect = answer == expectedanswer;
 				string expectedAnswerResult;
 				if (answer != "Not Implemented" && RunnerSettings.UseExampleData)
 				{
-					expectedAnswerResult = isExpectedAnswerCorrect ? "(CORRECT)\t" : "(INCORRECT)\t";
+					expectedAnswerResult = isExpectedAnswerCorrect ? $"(CORRECT)" : $"(INCORRECT)";
+					expectedAnswerResult = $"{expectedAnswerResult} Expected: {expectedanswer} Actual: {answer}";
 				}
 				else
 				{
