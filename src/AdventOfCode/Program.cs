@@ -9,8 +9,7 @@ namespace AdventOfCode
 		public static IConfiguration Configuration { get; private set; } = null!;
 		public static RunnerSettings RunnerSettings { get; private set; } = null!;
 
-		private const int dividerLengthTop = 30;
-		private const int dividerLengthBottom = 46;
+		private const int dividerLengthTop = 65;
 
 		static void Main()
 		{
@@ -51,8 +50,8 @@ namespace AdventOfCode
 		{
 			var dayNumber = int.Parse(dayRunner.GetType().Name!.Replace("Day", ""));
 
-			Console.Write($"Day {dayNumber}\t");
-			Console.WriteLine(new string('-', dividerLengthTop));
+			var dayHeader = $"Day {dayNumber} {new string('-', dividerLengthTop)}";
+			Console.WriteLine(dayHeader);
 
 			if (RunnerSettings.RunPartOne)
 			{
@@ -83,7 +82,7 @@ namespace AdventOfCode
 				}
 			}
 
-			Console.WriteLine(new string('-', dividerLengthBottom));
+			Console.WriteLine(new string('-', dayHeader.Length));
 			Console.WriteLine();
 
 			static string ValidateExpectedAnswer(
@@ -112,7 +111,7 @@ namespace AdventOfCode
 				}
 				else
 				{
-					expectedAnswerResult = string.Empty;
+					expectedAnswerResult = answer;
 				}
 
 				return expectedAnswerResult;
