@@ -3,52 +3,55 @@
 	[AdventOfCodeYear(2018)]
 	public sealed class Day01 : AdventOfCodeDayBase
 	{
-		[ExpectedExampleAnswer("1")]
-		public override string RunPartOne()
+		[ExpectedExampleAnswers("3", "0", "-6")]
+		public override IEnumerable<string> RunPartOne()
 		{
-			var input = DayInputReader.GetData();
-
-			var finalFrequency = 0;
-
-			foreach (var item in input)
+			foreach (IEnumerable<string> dataSet in GetFileData().PartOne)
 			{
-				var frequency = int.Parse(item);
-				finalFrequency += frequency;
-			}
+				var finalFrequency = 0;
 
-			return finalFrequency.ToString();
+				foreach (var item in dataSet)
+				{
+					var frequency = int.Parse(item);
+					finalFrequency += frequency;
+				}
+
+				Answers.Add(finalFrequency.ToString());
+			}
+			return Answers;
 		}
 
-		[ExpectedExampleAnswer("897")]
-		public override string RunPartTwo()
+		[ExpectedExampleAnswers("0", "10", "5", "14")]
+		public override IEnumerable<string> RunPartTwo()
 		{
-			var input = DayInputReader.GetData();
-
-			var usedFrequencies = new HashSet<int>() { 0 };
-			var currentFrequency = 0;
-			var scanningFrequencies = true;
-			var firstRepeatingFrequency = 0;
-
-			while (scanningFrequencies)
+			foreach (IEnumerable<string> dataSet in GetFileData().PartTwo)
 			{
+				var usedFrequencies = new HashSet<int>() { 0 };
+				var currentFrequency = 0;
+				var scanningFrequencies = true;
+				var firstRepeatingFrequency = 0;
 
-				foreach (var item in input)
+				while (scanningFrequencies)
 				{
-					var frequencyChange = int.Parse(item);
-					currentFrequency += frequencyChange;
-
-					if (usedFrequencies.TryGetValue(currentFrequency, out int _))
+					foreach (var item in dataSet)
 					{
-						firstRepeatingFrequency = currentFrequency;
-						scanningFrequencies = false;
-						break;
+						var frequencyChange = int.Parse(item);
+						currentFrequency += frequencyChange;
+
+						if (usedFrequencies.TryGetValue(currentFrequency, out int _))
+						{
+							firstRepeatingFrequency = currentFrequency;
+							scanningFrequencies = false;
+							break;
+						}
+
+						usedFrequencies.Add(currentFrequency);
 					}
-
-					usedFrequencies.Add(currentFrequency);
 				}
-			}
 
-			return firstRepeatingFrequency.ToString();
+				Answers.Add(firstRepeatingFrequency.ToString());
+			}
+			return Answers;
 		}
 	}
 }

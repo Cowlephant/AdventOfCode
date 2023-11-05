@@ -56,28 +56,53 @@ namespace AdventOfCode
 
 			if (RunnerSettings.RunPartOne)
 			{
-				var answer = dayRunner.RunPartOne();
-				string expectedAnswerResult = ValidateExpectedAnswer(dayRunner, "RunPartOne", answer);
+				IEnumerable<string> answers = dayRunner.RunPartOne();
 
-				Console.WriteLine($"\tPart 1 Answer: {expectedAnswerResult}{answer}");
+				Console.WriteLine($"\tPart 1");
+
+				foreach (var (answer, index) in answers.Select((a, i) => (a, i)))
+				{
+					string expectedAnswerResult = ValidateExpectedAnswer(
+						answers, dayRunner, "RunPartOne", answer, index);
+
+					Console.WriteLine($"\t\tDataset {index + 1} Answer: {expectedAnswerResult}{answer}");
+				}
 			}
 			if (RunnerSettings.RunPartTwo)
 			{
-				var answer = dayRunner.RunPartTwo();
-				string expectedAnswerResult = ValidateExpectedAnswer(dayRunner, "RunPartTwo", answer);
+				IEnumerable<string> answers = dayRunner.RunPartTwo();
 
-				Console.WriteLine($"\tPart 2 Answer: {expectedAnswerResult}{answer}");
+				Console.WriteLine($"\tPart 2");
+
+				foreach (var (answer, index) in answers.Select((a, i) => (a, i)))
+				{
+					string expectedAnswerResult = ValidateExpectedAnswer(
+						answers, dayRunner, "RunPartTwo", answer, index);
+
+					Console.WriteLine($"\t\tDataset {index + 1} Answer: {expectedAnswerResult}{answer}");
+				}
 			}
-			
+
 			Console.WriteLine(new string('-', dividerLengthBottom));
 			Console.WriteLine();
 
-			static string ValidateExpectedAnswer(IAdventOfCodeRunner dayRunner, string partName, string answer)
+			static string ValidateExpectedAnswer(
+				IEnumerable<string> answers, IAdventOfCodeRunner dayRunner, string partName, string answer, int index)
 			{
-				var expectedAnswer = dayRunner.GetType().GetMethod(partName)!
-					.GetCustomAttribute<ExpectedExampleAnswerAttribute>()!.ExpectedExampleAnswer;
+				var expectedAnswers = dayRunner.GetType().GetMethod(partName)!
+					.GetCustomAttributes<ExpectedExampleAnswersAttribute>()!
+						.SelectMany(a => a.ExpectedExampleAnswers)
+						.ToList();
+				var answerCount = answers.Count();
+				var expectedAnswerCount = expectedAnswers.Count;
 
-				bool isExpectedAnswerCorrect = answer == expectedAnswer;
+				if (answerCount != expectedAnswerCount) 
+				{
+					throw new AdventOfCodeException($"Expected answer count must match the provided number of answers. " +
+						$"Answers: {answerCount} ExpectedAnswers: {expectedAnswerCount}");
+				}
+
+				bool isExpectedAnswerCorrect = answer == expectedAnswers[index];
 				string expectedAnswerResult;
 				if (answer != "Not Implemented" && RunnerSettings.UseExampleData)
 				{

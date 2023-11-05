@@ -2,7 +2,7 @@
 {
 	public interface IAdventOfCodeRunner
 	{
-		public string RunPartOne();
-		public string RunPartTwo();
+		public IEnumerable<string> RunPartOne();
+		public IEnumerable<string> RunPartTwo();
 	}
 }

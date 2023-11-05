@@ -3,16 +3,28 @@
 	[AdventOfCodeYear(2018)]
 	public sealed class Day02 : AdventOfCodeDayBase
 	{
-		[ExpectedExampleAnswer("")]
-		public override string RunPartOne()
+		[ExpectedExampleAnswers("")]
+		public override IEnumerable<string> RunPartOne()
 		{
-			return "Not Implemented";
+			foreach (IEnumerable<string> dataSet in GetFileData().PartOne)
+			{
+				// Solve
+
+				Answers.Add("Not Implemented");
+			}
+			return Answers;
 		}
 
-		[ExpectedExampleAnswer("")]
-		public override string RunPartTwo()
+		[ExpectedExampleAnswers("")]
+		public override IEnumerable<string> RunPartTwo()
 		{
-			return "Not Implemented";
+			foreach (IEnumerable<string> dataSet in GetFileData().PartTwo)
+			{
+				// Solve
+
+				Answers.Add("Not Implemented");
+			}
+			return Answers;
 		}
 	}
 }
