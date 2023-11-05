@@ -51,7 +51,7 @@ namespace AdventOfCode
 		{
 			var dayNumber = int.Parse(dayRunner.GetType().Name!.Replace("Day", ""));
 
-			Console.Write($"Running Day {dayNumber}\t");
+			Console.Write($"Day {dayNumber}\t");
 			Console.WriteLine(new string('-', dividerLengthTop));
 
 			if (RunnerSettings.RunPartOne)
