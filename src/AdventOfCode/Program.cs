@@ -6,8 +6,8 @@ namespace AdventOfCode
 {
 	static internal partial class Program
 	{
-		public static IConfiguration Configuration { get; private set; } = null!;
-		public static RunnerSettings RunnerSettings { get; private set; } = null!;
+		public static IConfiguration Configuration { get; set; } = null!;
+		public static RunnerSettings RunnerSettings { get; set; } = null!;
 
 		private const int dividerLengthTop = 65;
 
@@ -19,6 +19,11 @@ namespace AdventOfCode
 
 			RunnerSettings = ConfigurationBinder.Get<RunnerSettings>(Configuration.GetSection(nameof(RunnerSettings)))!;
 
+			RunDays();
+		}
+
+		private static void RunDays()
+		{
 			var withExampleData = RunnerSettings.UseExampleData ? " With Example Data" : "";
 
 			if (RunnerSettings.RunAllDays)

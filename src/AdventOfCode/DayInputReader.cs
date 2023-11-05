@@ -7,7 +7,7 @@ namespace AdventOfCode
 {
 	public static class DayInputReader
 	{
-		private static readonly IConfiguration configuration = Program.Configuration;
+		private static readonly RunnerSettings runnerSettings = Program.RunnerSettings;
 
 		public const string PartOneDelimiter = "[part1]";
 		public const string PartTwoDelimiter = "[part2]";
@@ -15,8 +15,8 @@ namespace AdventOfCode
 		// We're returning a tuple to distinguish between Part 1 and Part 2 example data
 		public static (IEnumerable<IEnumerable<string>> PartOne, IEnumerable<IEnumerable<string>> PartTwo) GetData()
 		{
-			bool useExampleData = bool.Parse(configuration["RunnerSettings:UseExampleData"]!);
-			string yearToRun = configuration["RunnerSettings:YearToRun"]!;
+			bool useExampleData = runnerSettings.UseExampleData;
+			string yearToRun =runnerSettings.YearToRun.ToString();
 			var exampleData = useExampleData ? "Example" : string.Empty;
 			string[] exampleLineDelimiters = new[] { PartOneDelimiter, PartTwoDelimiter };
 
