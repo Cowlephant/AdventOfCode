@@ -2,10 +2,10 @@
 
 namespace AdventOfCode.Solution
 {
-	[AdventOfCodeYear(2018)]
-	public sealed class Day01 : AdventOfCodeDayBase
+	[AoCYear(2018)]
+	public sealed class Day01 : AoCDayBase
 	{
-		[ExpectedExampleAnswers("3", "0", "-6")]
+		[AoCExpectedExampleAnswers("3", "0", "-6")]
 		public override string RunPartOne(IEnumerable<string> dataSet)
 		{
 			var finalFrequency = 0;
@@ -19,7 +19,7 @@ namespace AdventOfCode.Solution
 			return finalFrequency.ToString();
 		}
 
-		[ExpectedExampleAnswers("0", "10", "5", "14")]
+		[AoCExpectedExampleAnswers("0", "10", "5", "14")]
 		public override string RunPartTwo(IEnumerable<string> dataSet)
 		{
 			var usedFrequencies = new HashSet<int>() { 0 };

@@ -2,17 +2,17 @@
 
 namespace AdventOfCode.Solution
 {
-	[AdventOfCodeYear(2018)]
-	public sealed class Day02 : AdventOfCodeDayBase
+	[AoCYear(2018)]
+	public sealed class Day02 : AoCDayBase
 	{
-		[ExpectedExampleAnswers("")]
+		[AoCExpectedExampleAnswers("")]
 		public override string RunPartOne(IEnumerable<string> dataSet)
 		{
 			// Solve
 			return "Not Implemented";
 		}
 
-		[ExpectedExampleAnswers("")]
+		[AoCExpectedExampleAnswers("")]
 		public override string RunPartTwo(IEnumerable<string> dataSet)
 		{
 			// Solve

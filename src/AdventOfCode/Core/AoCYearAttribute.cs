@@ -1,10 +1,10 @@
 ﻿namespace AdventOfCode.Core
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public sealed class AdventOfCodeYearAttribute : Attribute
+    public sealed class AoCYearAttribute : Attribute
     {
         public int Year { get; private set; }
-        public AdventOfCodeYearAttribute(int year)
+        public AoCYearAttribute(int year)
         {
             Year = year;
         }

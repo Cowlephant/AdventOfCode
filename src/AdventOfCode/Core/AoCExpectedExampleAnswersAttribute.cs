@@ -1,10 +1,10 @@
 ﻿namespace AdventOfCode.Core
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public sealed class ExpectedExampleAnswersAttribute : Attribute
+    public sealed class AoCExpectedExampleAnswersAttribute : Attribute
     {
         public IEnumerable<string> ExpectedExampleAnswers { get; private set; }
-        public ExpectedExampleAnswersAttribute(params string[] expectedExampleAnswer)
+        public AoCExpectedExampleAnswersAttribute(params string[] expectedExampleAnswer)
         {
             ExpectedExampleAnswers = expectedExampleAnswer;
         }

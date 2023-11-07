@@ -2,11 +2,11 @@
 
 namespace AdventOfCode.Core
 {
-    public sealed class AdventOfCodeInputReader
+    public sealed class AoCInputReader
     {
-        private readonly AdventOfCodeSettings settings;
+        private readonly AoCSettings settings;
 
-        public AdventOfCodeInputReader(AdventOfCodeSettings settings)
+        public AoCInputReader(AoCSettings settings)
         {
             this.settings = settings;
         }
@@ -27,7 +27,7 @@ namespace AdventOfCode.Core
 
             if (inputData.Count == 0)
             {
-                throw new AdventOfCodeException($"There is no {exampleData} Data provided to read from.");
+                throw new AoCException($"There is no {exampleData} Data provided to read from.");
             }
 
             var partOneReturnData = new List<List<string>>();
@@ -57,7 +57,7 @@ namespace AdventOfCode.Core
                                 case PartTwoDelimiter:
                                     partTwoReturnData.Add(currentExampleDataSet);
                                     break;
-                                default: throw new AdventOfCodeException($"Invalid part delimiter. ({line})");
+                                default: throw new AoCException($"Invalid part delimiter. ({line})");
                             }
 
                             currentExampleDataSet = new List<string>();

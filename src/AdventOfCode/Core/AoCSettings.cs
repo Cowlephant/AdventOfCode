@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Core
 {
-    public sealed class AdventOfCodeSettings
+    public sealed class AoCSettings
     {
         public bool UseExampleData { get; set; } = false;
         public bool RunAllDays { get; set; } = true;

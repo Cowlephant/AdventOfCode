@@ -5,10 +5,10 @@ using Microsoft.Extensions.Hosting;
 
 namespace AdventOfCode
 {
-	static internal partial class Program
+    static internal partial class Program
 	{
 		public static IConfiguration Configuration { get; set; } = null!;
-		public static AdventOfCodeSettings RunnerSettings { get; set; } = null!;
+		public static AoCSettings RunnerSettings { get; set; } = null!;
 
 		static void Main()
 		{
@@ -21,14 +21,14 @@ namespace AdventOfCode
 				{
 					services.AddTransient(serviceProvider =>
 					{
-						return builder.GetSection(nameof(AdventOfCodeSettings)).Get<AdventOfCodeSettings>()!;
+						return builder.GetSection(nameof(AoCSettings)).Get<AoCSettings>()!;
 					});
-					services.AddTransient<AdventOfCodeRunner>();
-					services.AddTransient<AdventOfCodeInputReader>();
+					services.AddTransient<AoCRunner>();
+					services.AddTransient<AoCInputReader>();
 				})
 				.Build();
 
-			AdventOfCodeRunner application = host.Services.GetService<AdventOfCodeRunner>()!;
+			AoCRunner application = host.Services.GetService<AoCRunner>()!;
 			application.Run();
 		}
 
