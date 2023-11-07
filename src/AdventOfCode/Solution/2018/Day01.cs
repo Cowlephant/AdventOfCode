@@ -6,7 +6,7 @@ namespace AdventOfCode.Solution
 	public sealed class Day01 : AoCDayBase
 	{
 		[AoCExpectedExampleAnswers("3", "0", "-6")]
-		public override string RunPartOne(IEnumerable<string> input)
+		public override string SolvePartOne(IEnumerable<string> input)
 		{
 			var finalFrequency = 0;
 
@@ -20,7 +20,7 @@ namespace AdventOfCode.Solution
 		}
 
 		[AoCExpectedExampleAnswers("0", "10", "5", "14")]
-		public override string RunPartTwo(IEnumerable<string> input)
+		public override string SolvePartTwo(IEnumerable<string> input)
 		{
 			var usedFrequencies = new HashSet<int>() { 0 };
 			var currentFrequency = 0;

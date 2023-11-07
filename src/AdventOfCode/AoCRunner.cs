@@ -53,15 +53,15 @@ namespace AdventOfCode
             }
         }
 
-        private void RunParts(IAoCDayRunner dayRunner)
+        private void RunParts(IAoCDaySolver daySolver)
         {
             const int dividerLengthTop = 65;
-            var dayNumber = int.Parse(dayRunner.GetType().Name!.Replace("Day", ""));
+            var dayNumber = int.Parse(daySolver.GetType().Name!.Replace("Day", ""));
 
             var dayHeader = $"Day {dayNumber} {new string('-', dividerLengthTop)}";
             Console.WriteLine(dayHeader);
 
-            string dayName = dayRunner.GetType().Name;
+            string dayName = daySolver.GetType().Name;
             var (PartOneData, PartTwoData) = inputReader.GetData(dayName);
 
             if (settings.RunPartOne)
@@ -71,7 +71,7 @@ namespace AdventOfCode
                 foreach (var partOneData in PartOneData)
                 {
                     stopwatch.Start();
-                    var answer = dayRunner.RunPartOne(partOneData);
+                    var answer = daySolver.SolvePartOne(partOneData);
                     stopwatch.Stop();
                     var duration = stopwatch.ElapsedTicks;
 
@@ -83,7 +83,7 @@ namespace AdventOfCode
                 foreach (var (answer, index) in answers.Select((a, i) => (a, i)))
                 {
                     string answerResult = ValidateExpectedAnswer(
-                        answers, dayRunner, "RunPartOne", answer, index);
+                        answers, daySolver, "SolvePartOne", answer, index);
 
                     Console.WriteLine($"\t\tDataset {index + 1} Answer: {answerResult}");
                 }
@@ -97,7 +97,7 @@ namespace AdventOfCode
                 foreach (var partTwoData in PartTwoData)
                 {
                     stopwatch.Start();
-                    var answer = dayRunner.RunPartOne(partTwoData);
+                    var answer = daySolver.SolvePartOne(partTwoData);
                     stopwatch.Stop();
                     var duration = stopwatch.ElapsedTicks;
 
@@ -109,7 +109,7 @@ namespace AdventOfCode
                 foreach (var (answer, index) in answers.Select((a, i) => (a, i)))
                 {
                     string answerResult = ValidateExpectedAnswer(
-                        answers, dayRunner, "RunPartTwo", answer, index);
+                        answers, daySolver, "SolvePartTwo", answer, index);
 
                     Console.WriteLine($"\t\tDataset {index + 1} Answer: {answerResult}");
                 }
@@ -121,12 +121,12 @@ namespace AdventOfCode
 
         private string ValidateExpectedAnswer(
             IEnumerable<(string Answer, long Duration)> answers,
-            IAoCDayRunner dayRunner,
+            IAoCDaySolver daySolver,
             string partName,
             (string Answer, long DurationTicks) answer,
             int index)
         {
-            var expectedAnswers = dayRunner.GetType().GetMethod(partName)!
+            var expectedAnswers = daySolver.GetType().GetMethod(partName)!
                 .GetCustomAttributes<AoCExpectedExampleAnswersAttribute>()!
                     .SelectMany(a => a.ExpectedExampleAnswers)
                     .ToList();
@@ -161,12 +161,12 @@ namespace AdventOfCode
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "SYSLIB1045:Convert to 'GeneratedRegexAttribute'.", Justification = "Performance optimization not necessary")]
-        private List<IAoCDayRunner> GetAllDays(IEnumerable<string>? filteredDays = null)
+        private List<IAoCDaySolver> GetAllDays(IEnumerable<string>? filteredDays = null)
         {
-            var dayRunnerType = typeof(IAoCDayRunner);
+            var daySolverType = typeof(IAoCDaySolver);
 
-            var allDays = dayRunnerType.Assembly.GetTypes()
-                .Where(type => dayRunnerType.IsAssignableFrom(type)
+            var allDays = daySolverType.Assembly.GetTypes()
+                .Where(type => daySolverType.IsAssignableFrom(type)
                 && type.CustomAttributes.Any(a => a.AttributeType == typeof(AoCYearAttribute))
                 && type.GetCustomAttribute<AoCYearAttribute>()!.Year == settings.YearToRun
                 && !type.IsAbstract);
@@ -182,13 +182,13 @@ namespace AdventOfCode
                 }
             }
 
-            List<IAoCDayRunner> daysToRun = new();
+            List<IAoCDaySolver> daysToRun = new();
 
             if (filteredDays == null)
             {
                 foreach (var day in allDays)
                 {
-                    var dayToRun = (IAoCDayRunner)Activator.CreateInstance(day)!;
+                    var dayToRun = (IAoCDaySolver)Activator.CreateInstance(day)!;
                     daysToRun.Add(dayToRun);
                 }
             }
@@ -200,7 +200,7 @@ namespace AdventOfCode
 
                 foreach (var day in selectedDays)
                 {
-                    var dayToRun = (IAoCDayRunner)Activator.CreateInstance(day, inputReader)!;
+                    var dayToRun = (IAoCDaySolver)Activator.CreateInstance(day, inputReader)!;
 
                     daysToRun.Add(dayToRun);
                 }

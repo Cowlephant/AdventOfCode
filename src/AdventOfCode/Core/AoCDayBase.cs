@@ -1,8 +1,8 @@
 ﻿namespace AdventOfCode.Core
 {
-    public abstract class AoCDayBase : IAoCDayRunner
+    public abstract class AoCDayBase : IAoCDaySolver
     {
-        public abstract string RunPartOne(IEnumerable<string> input);
-        public abstract string RunPartTwo(IEnumerable<string> input);
+        public abstract string SolvePartOne(IEnumerable<string> input);
+        public abstract string SolvePartTwo(IEnumerable<string> input);
     }
 }

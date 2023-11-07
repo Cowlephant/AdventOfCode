@@ -6,14 +6,14 @@ namespace AdventOfCode.Solution
 	public sealed class Day02 : AoCDayBase
 	{
 		[AoCExpectedExampleAnswers("")]
-		public override string RunPartOne(IEnumerable<string> dataSet)
+		public override string SolvePartOne(IEnumerable<string> dataSet)
 		{
 			// Solve
 			return "Not Implemented";
 		}
 
 		[AoCExpectedExampleAnswers("")]
-		public override string RunPartTwo(IEnumerable<string> dataSet)
+		public override string SolvePartTwo(IEnumerable<string> dataSet)
 		{
 			// Solve
 			return "Not Implemented";
