@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using static BenchmarkDotNet.Engines.EngineEventSource;
 
 namespace AdventOfCode.Core
 {
