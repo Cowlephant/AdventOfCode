@@ -1,178 +1,212 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using static BenchmarkDotNet.Engines.EngineEventSource;
 
 namespace AdventOfCode.Core
 {
-    internal sealed class AdventOfCodeRunner
-    {
-        private readonly AdventOfCodeSettings settings;
-        private readonly AdventOfCodeInputReader dayInputReader;
+	internal sealed class AdventOfCodeRunner
+	{
+		private readonly AdventOfCodeSettings settings;
+		private readonly AdventOfCodeInputReader dayInputReader;
+		private readonly Stopwatch stopwatch;
 
-        public AdventOfCodeRunner(IConfiguration configuration, AdventOfCodeInputReader dayInputReader)
-        {
-            settings = configuration.GetSection(nameof(AdventOfCodeSettings)).Get<AdventOfCodeSettings>()!;
-            this.dayInputReader = dayInputReader;
-        }
+		public AdventOfCodeRunner(IConfiguration configuration, AdventOfCodeInputReader dayInputReader)
+		{
+			settings = configuration.GetSection(nameof(AdventOfCodeSettings)).Get<AdventOfCodeSettings>()!;
+			this.dayInputReader = dayInputReader;
+			stopwatch = new Stopwatch();
+		}
 
-        public void Run()
-        {
-            RunDays();
-        }
+		public void Run()
+		{
+			RunDays();
+		}
 
-        private void RunDays()
-        {
-            var withExampleData = settings.UseExampleData ? " With Example Data" : "";
+		private void RunDays()
+		{
+			var withExampleData = settings.UseExampleData ? " With Example Data" : "";
 
-            if (settings.RunAllDays)
-            {
-                Console.WriteLine($"Running All Days{withExampleData}");
+			if (settings.RunAllDays)
+			{
+				Console.WriteLine($"Running All Days{withExampleData}");
 
-                foreach (var day in GetAllDays())
-                {
-                    RunParts(day);
-                }
-            }
-            else if (settings.DaysToRun.Any())
-            {
-                var daysToRun = string.Join(", ", settings.DaysToRun);
-                Console.WriteLine($"Running Specific Days{withExampleData}: {daysToRun}");
+				foreach (var day in GetAllDays())
+				{
+					RunParts(day);
+				}
+			}
+			else if (settings.DaysToRun.Any())
+			{
+				var daysToRun = string.Join(", ", settings.DaysToRun);
+				Console.WriteLine($"Running Specific Days{withExampleData}: {daysToRun}");
 
-                foreach (var day in GetAllDays(settings.DaysToRun))
-                {
-                    RunParts(day);
-                }
-            }
-            else
-            {
-                throw new AdventOfCodeException("No days configured to run.");
-            }
-        }
+				foreach (var day in GetAllDays(settings.DaysToRun))
+				{
+					RunParts(day);
+				}
+			}
+			else
+			{
+				throw new AdventOfCodeException("No days configured to run.");
+			}
+		}
 
-        private void RunParts(IAdventOfCodeRunner dayRunner)
-        {
-            const int dividerLengthTop = 65;
-            var dayNumber = int.Parse(dayRunner.GetType().Name!.Replace("Day", ""));
+		private void RunParts(IAdventOfCodeRunner dayRunner)
+		{
+			const int dividerLengthTop = 65;
+			var dayNumber = int.Parse(dayRunner.GetType().Name!.Replace("Day", ""));
 
-            var dayHeader = $"Day {dayNumber} {new string('-', dividerLengthTop)}";
-            Console.WriteLine(dayHeader);
+			var dayHeader = $"Day {dayNumber} {new string('-', dividerLengthTop)}";
+			Console.WriteLine(dayHeader);
 
-            if (settings.RunPartOne)
-            {
-                IEnumerable<string> answers = dayRunner.RunPartOne();
+			string dayName = dayRunner.GetType().Name;
+			var (PartOneData, PartTwoData) = dayInputReader.GetData(dayName);
 
-                Console.WriteLine($"\tPart 1");
+			if (settings.RunPartOne)
+			{
+				List<(string Answer, long DurationTicks)> answers = new();
 
-                foreach (var (answer, index) in answers.Select((a, i) => (a, i)))
-                {
-                    string answerResult = ValidateExpectedAnswer(
-                        answers, dayRunner, "RunPartOne", answer, index);
+				foreach (var partOneData in PartOneData)
+				{
+					stopwatch.Start();
+					var answer = dayRunner.RunPartOne(partOneData);
+					stopwatch.Stop();
+					var duration = stopwatch.ElapsedTicks;
 
-                    Console.WriteLine($"\t\tDataset {index + 1} Answer: {answerResult}");
-                }
-            }
-            if (settings.RunPartTwo)
-            {
-                IEnumerable<string> answers = dayRunner.RunPartTwo();
+					answers.Add(new(answer, duration));
+				}
 
-                Console.WriteLine($"\tPart 2");
+				Console.WriteLine($"\tPart 1");
 
-                foreach (var (answer, index) in answers.Select((a, i) => (a, i)))
-                {
-                    string answerResult = ValidateExpectedAnswer(
-                        answers, dayRunner, "RunPartTwo", answer, index);
+				foreach (var (answer, index) in answers.Select((a, i) => (a, i)))
+				{
+					string answerResult = ValidateExpectedAnswer(
+						answers, dayRunner, "RunPartOne", answer, index);
 
-                    Console.WriteLine($"\t\tDataset {index + 1} Answer: {answerResult}");
-                }
-            }
+					Console.WriteLine($"\t\tDataset {index + 1} Answer: {answerResult}");
+				}
 
-            Console.WriteLine(new string('-', dayHeader.Length));
-            Console.WriteLine();
-        }
+				stopwatch.Reset();
+			}
+			if (settings.RunPartTwo)
+			{
+				List<(string Answer, long DurationTicks)> answers = new();
 
-        private string ValidateExpectedAnswer(
-            IEnumerable<string> answers,
-            IAdventOfCodeRunner dayRunner,
-            string partName,
-            string answer,
-            int index)
-        {
-            var expectedAnswers = dayRunner.GetType().GetMethod(partName)!
-                .GetCustomAttributes<ExpectedExampleAnswersAttribute>()!
-                    .SelectMany(a => a.ExpectedExampleAnswers)
-                    .ToList();
-            var answerCount = answers.Count();
-            var expectedAnswerCount = expectedAnswers.Count;
+				foreach (var partTwoData in PartTwoData)
+				{
+					stopwatch.Start();
+					var answer = dayRunner.RunPartOne(partTwoData);
+					stopwatch.Stop();
+					var duration = stopwatch.ElapsedTicks;
 
-            if (answerCount != expectedAnswerCount)
-            {
-                throw new AdventOfCodeException($"Expected answer count must match the provided number of answers. " +
-                    $"Answers: {answerCount} ExpectedAnswers: {expectedAnswerCount}");
-            }
+					answers.Add(new(answer, duration));
+				}
 
-            string expectedanswer = expectedAnswers[index];
-            bool isExpectedAnswerCorrect = answer == expectedanswer;
-            string expectedAnswerResult;
-            if (answer != "Not Implemented" && settings.UseExampleData)
-            {
-                expectedAnswerResult = isExpectedAnswerCorrect ? $"(CORRECT)" : $"(INCORRECT)";
-                expectedAnswerResult = $"{expectedAnswerResult} Expected: {expectedanswer} Actual: {answer}";
-            }
-            else
-            {
-                expectedAnswerResult = answer;
-            }
+				Console.WriteLine($"\tPart 2");
 
-            return expectedAnswerResult;
-        }
+				foreach (var (answer, index) in answers.Select((a, i) => (a, i)))
+				{
+					string answerResult = ValidateExpectedAnswer(
+						answers, dayRunner, "RunPartTwo", answer, index);
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "SYSLIB1045:Convert to 'GeneratedRegexAttribute'.", Justification = "Performance optimization not necessary")]
-        private IEnumerable<IAdventOfCodeRunner> GetAllDays(IEnumerable<string>? filteredDays = null)
-        {
-            var adventOfCodeRunnerType = typeof(IAdventOfCodeRunner);
+					Console.WriteLine($"\t\tDataset {index + 1} Answer: {answerResult}");
+				}
+			}
 
-            var allDays = adventOfCodeRunnerType.Assembly.GetTypes()
-                .Where(type => adventOfCodeRunnerType.IsAssignableFrom(type)
-                && type.CustomAttributes.Any(a => a.AttributeType == typeof(AdventOfCodeYearAttribute))
-                && type.GetCustomAttribute<AdventOfCodeYearAttribute>()!.Year == settings.YearToRun
-                && !type.IsAbstract);
+			Console.WriteLine(new string('-', dayHeader.Length));
+			Console.WriteLine();
+		}
 
-            foreach (var day in allDays.Select(d => d.Name))
-            {
-                var className = day;
-                var namingPattern = new Regex(@"^Day[012]\d");
+		private string ValidateExpectedAnswer(
+			IEnumerable<(string Answer, long Duration)> answers,
+			IAdventOfCodeRunner dayRunner,
+			string partName,
+			(string Answer, long DurationTicks) answer,
+			int index)
+		{
+			var expectedAnswers = dayRunner.GetType().GetMethod(partName)!
+				.GetCustomAttributes<ExpectedExampleAnswersAttribute>()!
+					.SelectMany(a => a.ExpectedExampleAnswers)
+					.ToList();
+			var answerCount = answers.Count();
+			var expectedAnswerCount = expectedAnswers.Count;
 
-                if (!namingPattern.IsMatch(className))
-                {
-                    throw new AdventOfCodeException($"Day class name does not match required pattern Day##: {className}");
-                }
-            }
+			if (answerCount != expectedAnswerCount)
+			{
+				throw new AdventOfCodeException($"Expected answer count must match the provided number of answers.\n" +
+					"Check your [ExpectedExampleAnswers()] attribute!\n" +
+					$"Answers: {answerCount} ExpectedAnswers: {expectedAnswerCount}");
+			}
 
-            List<IAdventOfCodeRunner> daysToRun = new();
+			string expectedanswer = expectedAnswers[index];
+			bool isExpectedAnswerCorrect = answer.Answer == expectedanswer;
+			string expectedAnswerResult;
+			if (answer.Answer != "Not Implemented" && settings.UseExampleData)
+			{
+				long answerMicroseconds = answer.DurationTicks / (TimeSpan.TicksPerMillisecond / 1000);
+				// Conver to milliseconds if long enough, otherwise microseconds
+				string answerString = answerMicroseconds > 1000 ? $"{(answerMicroseconds / 1000)}ms" : $"{answerMicroseconds}μs";
 
-            if (filteredDays == null)
-            {
-                foreach (var day in allDays)
-                {
-                    var dayToRun = (IAdventOfCodeRunner)Activator.CreateInstance(day, dayInputReader)!;
-                    daysToRun.Add(dayToRun);
-                }
-            }
-            else
-            {
-                var selectedDays = allDays.Where(day =>
-                    filteredDays.Any(d =>
-                        d.Equals(day.Name, StringComparison.CurrentCultureIgnoreCase)));
+				expectedAnswerResult = isExpectedAnswerCorrect ? $"(CORRECT)" : $"(INCORRECT)";
+				expectedAnswerResult = $"{expectedAnswerResult} (Duration: {answerString}) Expected: {expectedanswer} Actual: {answer.Answer}";
+			}
+			else
+			{
+				expectedAnswerResult = answer.Answer;
+			}
 
-                foreach (var day in selectedDays)
-                {
-                    var dayToRun = (IAdventOfCodeRunner)Activator.CreateInstance(day, dayInputReader)!;
+			return expectedAnswerResult;
+		}
 
-                    daysToRun.Add(dayToRun);
-                }
-            }
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "SYSLIB1045:Convert to 'GeneratedRegexAttribute'.", Justification = "Performance optimization not necessary")]
+		private List<IAdventOfCodeRunner> GetAllDays(IEnumerable<string>? filteredDays = null)
+		{
+			var adventOfCodeRunnerType = typeof(IAdventOfCodeRunner);
 
-            return daysToRun;
-        }
-    }
+			var allDays = adventOfCodeRunnerType.Assembly.GetTypes()
+				.Where(type => adventOfCodeRunnerType.IsAssignableFrom(type)
+				&& type.CustomAttributes.Any(a => a.AttributeType == typeof(AdventOfCodeYearAttribute))
+				&& type.GetCustomAttribute<AdventOfCodeYearAttribute>()!.Year == settings.YearToRun
+				&& !type.IsAbstract);
+
+			foreach (var day in allDays.Select(d => d.Name))
+			{
+				var className = day;
+				var namingPattern = new Regex(@"^Day[012]\d");
+
+				if (!namingPattern.IsMatch(className))
+				{
+					throw new AdventOfCodeException($"Day class name does not match required pattern Day##: {className}");
+				}
+			}
+
+			List<IAdventOfCodeRunner> daysToRun = new();
+
+			if (filteredDays == null)
+			{
+				foreach (var day in allDays)
+				{
+					var dayToRun = (IAdventOfCodeRunner)Activator.CreateInstance(day)!;
+					daysToRun.Add(dayToRun);
+				}
+			}
+			else
+			{
+				var selectedDays = allDays.Where(day =>
+					filteredDays.Any(d =>
+						d.Equals(day.Name, StringComparison.CurrentCultureIgnoreCase)));
+
+				foreach (var day in selectedDays)
+				{
+					var dayToRun = (IAdventOfCodeRunner)Activator.CreateInstance(day, dayInputReader)!;
+
+					daysToRun.Add(dayToRun);
+				}
+			}
+
+			return daysToRun;
+		}
+	}
 }

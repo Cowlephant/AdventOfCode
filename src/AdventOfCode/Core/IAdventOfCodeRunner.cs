@@ -2,7 +2,7 @@
 {
     public interface IAdventOfCodeRunner
     {
-        public IEnumerable<string> RunPartOne();
-        public IEnumerable<string> RunPartTwo();
+        public string RunPartOne(IEnumerable<string> dataSet);
+        public string RunPartTwo(IEnumerable<string> dataSet);
     }
 }

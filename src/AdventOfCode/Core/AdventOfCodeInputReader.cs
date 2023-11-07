@@ -15,19 +15,14 @@ namespace AdventOfCode.Core
         public const string PartTwoDelimiter = "[part2]";
 
         // We're returning a tuple to distinguish between Part 1 and Part 2 example data
-        public (IEnumerable<IEnumerable<string>> PartOne, IEnumerable<IEnumerable<string>> PartTwo) GetData()
+        public (IEnumerable<IEnumerable<string>> PartOne, IEnumerable<IEnumerable<string>> PartTwo) GetData(string dayName)
         {
             bool useExampleData = settings.UseExampleData;
             string yearToRun = settings.YearToRun.ToString();
             var exampleData = useExampleData ? "Example" : string.Empty;
             string[] exampleLineDelimiters = new[] { PartOneDelimiter, PartTwoDelimiter };
 
-            // We need to use StackTrace to get our expected caller of the caller to this data.
-            // Was originally using [CallerFilePath] but since we moved the call to base class it no longer worked.
-            var stackTrace = new StackTrace();
-            string callerTypeName = stackTrace.GetFrame(2)!.GetMethod()!.DeclaringType!.Name;
-
-            var filePath = $"Data\\{yearToRun}\\{callerTypeName}{exampleData}.txt";
+            var filePath = $"Data\\{yearToRun}\\{dayName}{exampleData}.txt";
             List<string> inputData = File.ReadLines(filePath).ToList();
 
             if (inputData.Count == 0)
