@@ -15,7 +15,6 @@ namespace AdventOfCode.Solution
 				var frequency = int.Parse(item);
 				finalFrequency += frequency;
 			}
-			Thread.Sleep(1000);
 
 			return finalFrequency.ToString();
 		}
