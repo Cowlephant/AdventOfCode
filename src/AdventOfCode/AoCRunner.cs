@@ -9,13 +9,13 @@ namespace AdventOfCode
     internal sealed class AoCRunner
     {
         private readonly AoCSettings settings;
-        private readonly AoCInputReader dayInputReader;
+        private readonly AoCInputReader inputReader;
         private readonly Stopwatch stopwatch;
 
-        public AoCRunner(IConfiguration configuration, AoCInputReader dayInputReader)
+        public AoCRunner(IConfiguration configuration, AoCInputReader inputReader)
         {
             settings = configuration.GetSection(nameof(AoCSettings)).Get<AoCSettings>()!;
-            this.dayInputReader = dayInputReader;
+            this.inputReader = inputReader;
             stopwatch = new Stopwatch();
         }
 
@@ -53,7 +53,7 @@ namespace AdventOfCode
             }
         }
 
-        private void RunParts(IAdventOfCodeRunner dayRunner)
+        private void RunParts(IAoCDayRunner dayRunner)
         {
             const int dividerLengthTop = 65;
             var dayNumber = int.Parse(dayRunner.GetType().Name!.Replace("Day", ""));
@@ -62,7 +62,7 @@ namespace AdventOfCode
             Console.WriteLine(dayHeader);
 
             string dayName = dayRunner.GetType().Name;
-            var (PartOneData, PartTwoData) = dayInputReader.GetData(dayName);
+            var (PartOneData, PartTwoData) = inputReader.GetData(dayName);
 
             if (settings.RunPartOne)
             {
@@ -121,7 +121,7 @@ namespace AdventOfCode
 
         private string ValidateExpectedAnswer(
             IEnumerable<(string Answer, long Duration)> answers,
-            IAdventOfCodeRunner dayRunner,
+            IAoCDayRunner dayRunner,
             string partName,
             (string Answer, long DurationTicks) answer,
             int index)
@@ -161,12 +161,12 @@ namespace AdventOfCode
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "SYSLIB1045:Convert to 'GeneratedRegexAttribute'.", Justification = "Performance optimization not necessary")]
-        private List<IAdventOfCodeRunner> GetAllDays(IEnumerable<string>? filteredDays = null)
+        private List<IAoCDayRunner> GetAllDays(IEnumerable<string>? filteredDays = null)
         {
-            var adventOfCodeRunnerType = typeof(IAdventOfCodeRunner);
+            var dayRunnerType = typeof(IAoCDayRunner);
 
-            var allDays = adventOfCodeRunnerType.Assembly.GetTypes()
-                .Where(type => adventOfCodeRunnerType.IsAssignableFrom(type)
+            var allDays = dayRunnerType.Assembly.GetTypes()
+                .Where(type => dayRunnerType.IsAssignableFrom(type)
                 && type.CustomAttributes.Any(a => a.AttributeType == typeof(AoCYearAttribute))
                 && type.GetCustomAttribute<AoCYearAttribute>()!.Year == settings.YearToRun
                 && !type.IsAbstract);
@@ -182,13 +182,13 @@ namespace AdventOfCode
                 }
             }
 
-            List<IAdventOfCodeRunner> daysToRun = new();
+            List<IAoCDayRunner> daysToRun = new();
 
             if (filteredDays == null)
             {
                 foreach (var day in allDays)
                 {
-                    var dayToRun = (IAdventOfCodeRunner)Activator.CreateInstance(day)!;
+                    var dayToRun = (IAoCDayRunner)Activator.CreateInstance(day)!;
                     daysToRun.Add(dayToRun);
                 }
             }
@@ -200,7 +200,7 @@ namespace AdventOfCode
 
                 foreach (var day in selectedDays)
                 {
-                    var dayToRun = (IAdventOfCodeRunner)Activator.CreateInstance(day, dayInputReader)!;
+                    var dayToRun = (IAoCDayRunner)Activator.CreateInstance(day, inputReader)!;
 
                     daysToRun.Add(dayToRun);
                 }

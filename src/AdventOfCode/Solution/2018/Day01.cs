@@ -6,11 +6,11 @@ namespace AdventOfCode.Solution
 	public sealed class Day01 : AoCDayBase
 	{
 		[AoCExpectedExampleAnswers("3", "0", "-6")]
-		public override string RunPartOne(IEnumerable<string> dataSet)
+		public override string RunPartOne(IEnumerable<string> input)
 		{
 			var finalFrequency = 0;
 
-			foreach (var item in dataSet)
+			foreach (var item in input)
 			{
 				var frequency = int.Parse(item);
 				finalFrequency += frequency;
@@ -20,7 +20,7 @@ namespace AdventOfCode.Solution
 		}
 
 		[AoCExpectedExampleAnswers("0", "10", "5", "14")]
-		public override string RunPartTwo(IEnumerable<string> dataSet)
+		public override string RunPartTwo(IEnumerable<string> input)
 		{
 			var usedFrequencies = new HashSet<int>() { 0 };
 			var currentFrequency = 0;
@@ -29,7 +29,7 @@ namespace AdventOfCode.Solution
 
 			while (scanningFrequencies)
 			{
-				foreach (var item in dataSet)
+				foreach (var item in input)
 				{
 					var frequencyChange = int.Parse(item);
 					currentFrequency += frequencyChange;
