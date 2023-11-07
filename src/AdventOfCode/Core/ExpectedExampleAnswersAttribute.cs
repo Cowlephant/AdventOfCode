@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode
+﻿namespace AdventOfCode.Core
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public sealed class ExpectedExampleAnswersAttribute : Attribute

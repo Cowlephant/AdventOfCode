@@ -1,8 +1,14 @@
-﻿namespace AdventOfCode.Solution
+﻿using AdventOfCode.Core;
+
+namespace AdventOfCode.Solution
 {
-	[AdventOfCodeYear(2018)]
+    [AdventOfCodeYear(2018)]
 	public sealed class Day01 : AdventOfCodeDayBase
 	{
+		public Day01(AdventOfCodeInputReader dayInputReader) : base(dayInputReader)
+		{
+		}
+
 		[ExpectedExampleAnswers("3", "0", "-6")]
 		public override IEnumerable<string> RunPartOne()
 		{

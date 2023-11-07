@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode
+﻿namespace AdventOfCode.Core
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public sealed class AdventOfCodeYearAttribute : Attribute
