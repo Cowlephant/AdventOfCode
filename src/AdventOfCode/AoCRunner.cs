@@ -27,7 +27,7 @@ namespace AdventOfCode
 			resultsDisplay.Display(results);
 		}
 
-		private IEnumerable<DayResult> RunDays()
+		private List<DayResult> RunDays()
 		{
 			var dayResults = new List<DayResult>();
 
@@ -70,8 +70,8 @@ namespace AdventOfCode
 		private (IEnumerable<PartResult> PartOneResults, IEnumerable<PartResult> PartTwoResults)
 			RunParts(IAoCDaySolver daySolver)
 		{
-			List<PartResult> partOneResults = new List<PartResult>();
-			List<PartResult> partTwoResults = new List<PartResult>();
+			List<PartResult> partOneResults = new();
+			List<PartResult> partTwoResults = new();
 
 			string dayName = daySolver.GetType().Name;
 			var (PartOneData, PartTwoData) = inputReader.GetData(dayName);
@@ -81,37 +81,12 @@ namespace AdventOfCode
 
 			if (settings.RunPartOne)
 			{
-				foreach (var (partOneData, index) in PartOneData.Select((d, i) => (d, i)))
-				{
-					stopwatch.Start();
-					var answer = daySolver.SolvePartOne(partOneData);
-					stopwatch.Stop();
-
-					var expectedAnswer = partOneExpectedAnswers.ElementAtOrDefault(index) ?? "?";
-					var durationMicroseconds = stopwatch.ElapsedTicks / (TimeSpan.TicksPerMillisecond / 1000); ;
-					string durationFriendly = durationMicroseconds > 1000 ? $"{durationMicroseconds / 1000}ms" : $"{durationMicroseconds}μs";
-
-					var partResult = new PartResult(answer, expectedAnswer, answer == expectedAnswer, durationFriendly);
-					partOneResults.Add(partResult);
-				}
-
+				RunPart(daySolver, PartOneData, partOneResults, partOneExpectedAnswers, isPartOne: true);
 				stopwatch.Reset();
 			}
 			if (settings.RunPartTwo)
 			{
-				foreach (var (partTwoData, index) in PartTwoData.Select((d, i) => (d, i)))
-				{
-					stopwatch.Start();
-					var answer = daySolver.SolvePartTwo(partTwoData);
-					stopwatch.Stop();
-
-					var expectedAnswer = partTwoExpectedAnswers.ElementAtOrDefault(index) ?? "?";
-					var duration = stopwatch.ElapsedTicks;
-					string durationFriendly = duration > 1000 ? $"{duration / 1000}ms" : $"{duration}μs";
-
-					var partResult = new PartResult(answer, expectedAnswer, answer == expectedAnswer, durationFriendly);
-					partTwoResults.Add(partResult);
-				}
+				RunPart(daySolver, PartTwoData, partTwoResults, partTwoExpectedAnswers, isPartOne: false);
 			}
 
 			stopwatch.Reset();
@@ -119,7 +94,30 @@ namespace AdventOfCode
 			return (partOneResults, partTwoResults);
 		}
 
-		private IEnumerable<string> GetExpectedAnswers(Type dayType, string partName)
+		private void RunPart(
+			IAoCDaySolver daySolver,
+			IEnumerable<IEnumerable<string>> partData,
+			List<PartResult> partResults,
+			IEnumerable<string> expectedAnswers,
+			bool isPartOne)
+		{
+			foreach (var (partDatum, index) in partData.Select((d, i) => (d, i)))
+			{
+				stopwatch.Start();
+				var answer = isPartOne ? daySolver.SolvePartOne(partDatum.ToList())
+									   : daySolver.SolvePartTwo(partDatum.ToList());
+				stopwatch.Stop();
+
+				var expectedAnswer = expectedAnswers.ElementAtOrDefault(index) ?? "?";
+				var duration = stopwatch.ElapsedTicks;
+				string durationFriendly = duration > 1000 ? $"{duration / 1000}ms" : $"{duration}μs";
+
+				var partResult = new PartResult(answer, expectedAnswer, answer == expectedAnswer, durationFriendly);
+				partResults.Add(partResult);
+			}
+		}
+
+		private static List<string> GetExpectedAnswers(Type dayType, string partName)
 		{
 			var expectedAnswers = dayType.GetMethod(partName)!
 				.GetCustomAttributes<AoCExpectedExampleAnswersAttribute>()!

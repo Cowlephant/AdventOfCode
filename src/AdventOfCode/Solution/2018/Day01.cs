@@ -3,10 +3,10 @@
 namespace AdventOfCode.Solution
 {
 	[AoCYear(2018)]
-	public sealed class Day01 : AoCDayBase
+	public sealed class Day01 : IAoCDaySolver
 	{
 		[AoCExpectedExampleAnswers("3", "0", "-6")]
-		public override string SolvePartOne(IEnumerable<string> input)
+		public string SolvePartOne(List<string> input)
 		{
 			var finalFrequency = 0;
 
@@ -19,8 +19,8 @@ namespace AdventOfCode.Solution
 			return finalFrequency.ToString();
 		}
 
-		[AoCExpectedExampleAnswers("0", "10", "5", "13")]
-		public override string SolvePartTwo(IEnumerable<string> input)
+		[AoCExpectedExampleAnswers("0", "10", "5", "14")]
+		public string SolvePartTwo(List<string> input)
 		{
 			var usedFrequencies = new HashSet<int>() { 0 };
 			var currentFrequency = 0;

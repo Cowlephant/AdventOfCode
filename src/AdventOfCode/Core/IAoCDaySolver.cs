@@ -2,7 +2,7 @@
 {
 	public interface IAoCDaySolver
 	{
-		public string SolvePartOne(IEnumerable<string> input);
-		public string SolvePartTwo(IEnumerable<string> input);
+		public string SolvePartOne(List<string> input);
+		public string SolvePartTwo(List<string> input);
 	}
 }
