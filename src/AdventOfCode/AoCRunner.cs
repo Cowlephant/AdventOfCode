@@ -167,7 +167,7 @@ namespace AdventOfCode
 
 				foreach (var day in selectedDays)
 				{
-					var dayToRun = (IAoCDaySolver)Activator.CreateInstance(day, inputReader)!;
+					var dayToRun = (IAoCDaySolver)Activator.CreateInstance(day)!;
 
 					daysToRun.Add(dayToRun);
 				}

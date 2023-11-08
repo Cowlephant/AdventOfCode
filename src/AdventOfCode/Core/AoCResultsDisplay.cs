@@ -5,6 +5,13 @@ namespace AdventOfCode.Core
 {
 	public sealed class AoCResultsDisplay
 	{
+		private readonly AoCSettings settings;
+
+		public AoCResultsDisplay(AoCSettings settings)
+		{
+			this.settings = settings;
+		}
+
 		public void Display(IEnumerable<DayResult> results)
 		{
 			var yearNode = new Tree($"Advent of Code {results.First().dayYear}");
@@ -14,31 +21,42 @@ namespace AdventOfCode.Core
 			foreach (var result in results)
 			{
 				var dayNode = yearNode.AddNode(result.dayName);
-				
-				var partOneNode = dayNode.AddNode("Part 1");
-				var partTwoNode = dayNode.AddNode("Part 2");
 
-				var partOneTable = CreatePartTable();
-				var partTwoTable = CreatePartTable();
-
-				partOneNode.AddNode(partOneTable);
-				partTwoNode.AddNode(partTwoTable);
-
-				bool allPartOneCorrect = true;
-				bool allPartTwoCorrect = true;
-
-				foreach (var partOneResult in result.PartOneResults)
+				if (settings.RunPartOne)
 				{
-					CreatePartRow(partOneResult, partOneTable, out allPartOneCorrect);
+					var partOneTable = CreatePartTable();
+					var partOneNode = dayNode.AddNode("Part 1");
+					partOneNode.AddNode(partOneTable);
+					bool allPartOneCorrect = true;
+
+					foreach (var partOneResult in result.PartOneResults)
+					{
+						CreatePartRow(partOneResult, partOneTable, out allPartOneCorrect);
+					}
+
+					if (settings.UseExampleData)
+					{
+						StylizeSuccess(partOneTable, allPartOneCorrect);
+					}
 				}
 
-				foreach (var partTwoResult in result.PartTwoResults)
+				if (settings.RunPartTwo)
 				{
-					CreatePartRow(partTwoResult, partTwoTable, out allPartTwoCorrect);
-				}
+					var partTwoNode = dayNode.AddNode("Part 2");
+					var partTwoTable = CreatePartTable();
+					partTwoNode.AddNode(partTwoTable);
+					bool allPartTwoCorrect = true;
 
-				StylizeSuccess(partOneTable, allPartOneCorrect);
-				StylizeSuccess(partTwoTable, allPartTwoCorrect);
+					foreach (var partTwoResult in result.PartTwoResults)
+					{
+						CreatePartRow(partTwoResult, partTwoTable, out allPartTwoCorrect);
+					}
+
+					if (settings.UseExampleData)
+					{
+						StylizeSuccess(partTwoTable, allPartTwoCorrect);
+					}
+				}
 			}
 
 			AnsiConsole.Write(yearWrapper);
@@ -46,15 +64,30 @@ namespace AdventOfCode.Core
 
 		private Table CreatePartTable()
 		{
-			var partTable = new Table()
-				.RoundedBorder()
-				.AddColumn("Result", options => { options.Alignment = Justify.Left; })
-				.AddColumn("Duration", options => { options.Alignment = Justify.Right; })
-				.AddColumn("Answer", options => { options.Alignment = Justify.Right; })
-				.AddColumn("Expected", options => { options.Alignment = Justify.Right; })
-				.Border(TableBorder.Rounded)
-				.LeftAligned()
-				.Collapse();
+			Table partTable;
+
+			if (settings.UseExampleData)
+			{
+				partTable = new Table()
+					.RoundedBorder()
+					.AddColumn("Result", options => { options.Alignment = Justify.Left; })
+					.AddColumn("Duration", options => { options.Alignment = Justify.Right; })
+					.AddColumn("Answer", options => { options.Alignment = Justify.Right; })
+					.AddColumn("Expected", options => { options.Alignment = Justify.Right; })
+					.Border(TableBorder.Rounded)
+					.LeftAligned()
+					.Collapse();
+			}
+			else
+			{
+				partTable = new Table()
+					.RoundedBorder()
+					.AddColumn("Duration", options => { options.Alignment = Justify.Right; })
+					.AddColumn("Answer", options => { options.Alignment = Justify.Right; })
+					.Border(TableBorder.Rounded)
+					.LeftAligned()
+					.Collapse();
+			}
 
 			return partTable;
 		}
@@ -62,14 +95,23 @@ namespace AdventOfCode.Core
 		private void CreatePartRow(PartResult partResult, Table partTable, out bool allAnswersCorrect)
 		{
 			bool isImplemented = partResult.Answer != "Not Implemented";
+
 			var resultStatus = partResult.answersMatch ? "[green]CORRECT[/]" : "[red]INCORRECT[/]";
 			resultStatus = isImplemented ? resultStatus : string.Empty;
 			var duration = isImplemented ? partResult.Duration : string.Empty;
-			partTable.AddRow(
-				resultStatus,
-				duration,
-				partResult.Answer,
-				partResult.ExpectedAnswer);
+
+			if (settings.UseExampleData)
+			{
+				partTable.AddRow(
+					resultStatus,
+					duration,
+					partResult.Answer,
+					partResult.ExpectedAnswer);
+			}
+			else
+			{
+				partTable.AddRow(duration, partResult.Answer);
+			}
 
 			if (!partResult.answersMatch)
 			{
