@@ -19,7 +19,7 @@ namespace AdventOfCode.Solution
 			return finalFrequency.ToString();
 		}
 
-		[AoCExpectedExampleAnswers("0", "10", "5", "14")]
+		[AoCExpectedExampleAnswers("0", "10", "5", "13")]
 		public override string SolvePartTwo(IEnumerable<string> input)
 		{
 			var usedFrequencies = new HashSet<int>() { 0 };

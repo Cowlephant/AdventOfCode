@@ -25,11 +25,6 @@ namespace AdventOfCode.Core
             var filePath = $"Data\\{yearToRun}\\{dayName}{exampleData}.txt";
             List<string> inputData = File.ReadLines(filePath).ToList();
 
-            if (inputData.Count == 0)
-            {
-                throw new AoCException($"There is no {exampleData} Data provided to read from.");
-            }
-
             var partOneReturnData = new List<List<string>>();
             var partTwoReturnData = new List<List<string>>();
 

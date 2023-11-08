@@ -6,207 +6,175 @@ using System.Text.RegularExpressions;
 
 namespace AdventOfCode
 {
-    internal sealed class AoCRunner
-    {
-        private readonly AoCSettings settings;
-        private readonly AoCInputReader inputReader;
-        private readonly Stopwatch stopwatch;
+	internal sealed class AoCRunner
+	{
+		private readonly AoCSettings settings;
+		private readonly AoCInputReader inputReader;
+		private readonly AoCResultsDisplay resultsDisplay;
+		private readonly Stopwatch stopwatch;
 
-        public AoCRunner(IConfiguration configuration, AoCInputReader inputReader)
-        {
-            settings = configuration.GetSection(nameof(AoCSettings)).Get<AoCSettings>()!;
-            this.inputReader = inputReader;
-            stopwatch = new Stopwatch();
-        }
+		public AoCRunner(IConfiguration configuration, AoCInputReader inputReader, AoCResultsDisplay resultsDisplay)
+		{
+			settings = configuration.GetSection(nameof(AoCSettings)).Get<AoCSettings>()!;
+			this.inputReader = inputReader;
+			this.resultsDisplay = resultsDisplay;
+			stopwatch = new Stopwatch();
+		}
 
-        public void Run()
-        {
-            RunDays();
-        }
+		public void Run()
+		{
+			IEnumerable<DayResult> results = RunDays();
+			resultsDisplay.Display(results);
+		}
 
-        private void RunDays()
-        {
-            var withExampleData = settings.UseExampleData ? " With Example Data" : "";
+		private IEnumerable<DayResult> RunDays()
+		{
+			var dayResults = new List<DayResult>();
 
-            if (settings.RunAllDays)
-            {
-                Console.WriteLine($"Running All Days{withExampleData}");
+			if (settings.RunAllDays)
+			{
+				foreach (var day in GetAllDays())
+				{
+					var (partOneResults, partTwoResults) = RunParts(day);
+					var dayResult = new DayResult(
+						day.GetType().Name,
+						settings.YearToRun,
+						settings.UseExampleData,
+						partOneResults,
+						partTwoResults);
+					dayResults.Add(dayResult);
+				}
+			}
+			else if (settings.DaysToRun.Any())
+			{
+				foreach (var day in GetAllDays(settings.DaysToRun))
+				{
+					var (partOneResults, partTwoResults) = RunParts(day);
+					var dayResult = new DayResult(
+						day.GetType().Name,
+						settings.YearToRun,
+						settings.UseExampleData,
+						partOneResults,
+						partTwoResults);
+					dayResults.Add(dayResult);
+				}
+			}
+			else
+			{
+				throw new AoCException("No days configured to run.");
+			}
 
-                foreach (var day in GetAllDays())
-                {
-                    RunParts(day);
-                }
-            }
-            else if (settings.DaysToRun.Any())
-            {
-                var daysToRun = string.Join(", ", settings.DaysToRun);
-                Console.WriteLine($"Running Specific Days{withExampleData}: {daysToRun}");
+			return dayResults;
+		}
 
-                foreach (var day in GetAllDays(settings.DaysToRun))
-                {
-                    RunParts(day);
-                }
-            }
-            else
-            {
-                throw new AoCException("No days configured to run.");
-            }
-        }
+		private (IEnumerable<PartResult> PartOneResults, IEnumerable<PartResult> PartTwoResults)
+			RunParts(IAoCDaySolver daySolver)
+		{
+			List<PartResult> partOneResults = new List<PartResult>();
+			List<PartResult> partTwoResults = new List<PartResult>();
 
-        private void RunParts(IAoCDaySolver daySolver)
-        {
-            const int dividerLengthTop = 65;
-            var dayNumber = int.Parse(daySolver.GetType().Name!.Replace("Day", ""));
+			string dayName = daySolver.GetType().Name;
+			var (PartOneData, PartTwoData) = inputReader.GetData(dayName);
 
-            var dayHeader = $"Day {dayNumber} {new string('-', dividerLengthTop)}";
-            Console.WriteLine(dayHeader);
+			var partOneExpectedAnswers = GetExpectedAnswers(daySolver.GetType(), "SolvePartOne");
+			var partTwoExpectedAnswers = GetExpectedAnswers(daySolver.GetType(), "SolvePartTwo");
 
-            string dayName = daySolver.GetType().Name;
-            var (PartOneData, PartTwoData) = inputReader.GetData(dayName);
+			if (settings.RunPartOne)
+			{
+				foreach (var (partOneData, index) in PartOneData.Select((d, i) => (d, i)))
+				{
+					stopwatch.Start();
+					var answer = daySolver.SolvePartOne(partOneData);
+					stopwatch.Stop();
 
-            if (settings.RunPartOne)
-            {
-                List<(string Answer, long DurationTicks)> answers = new();
+					var expectedAnswer = partOneExpectedAnswers.ElementAtOrDefault(index) ?? "?";
+					var durationMicroseconds = stopwatch.ElapsedTicks / (TimeSpan.TicksPerMillisecond / 1000); ;
+					string durationFriendly = durationMicroseconds > 1000 ? $"{durationMicroseconds / 1000}ms" : $"{durationMicroseconds}μs";
 
-                foreach (var partOneData in PartOneData)
-                {
-                    stopwatch.Start();
-                    var answer = daySolver.SolvePartOne(partOneData);
-                    stopwatch.Stop();
-                    var duration = stopwatch.ElapsedTicks;
+					var partResult = new PartResult(answer, expectedAnswer, answer == expectedAnswer, durationFriendly);
+					partOneResults.Add(partResult);
+				}
 
-                    answers.Add(new(answer, duration));
-                }
+				stopwatch.Reset();
+			}
+			if (settings.RunPartTwo)
+			{
+				foreach (var (partTwoData, index) in PartTwoData.Select((d, i) => (d, i)))
+				{
+					stopwatch.Start();
+					var answer = daySolver.SolvePartTwo(partTwoData);
+					stopwatch.Stop();
 
-                Console.WriteLine($"\tPart 1");
+					var expectedAnswer = partTwoExpectedAnswers.ElementAtOrDefault(index) ?? "?";
+					var duration = stopwatch.ElapsedTicks;
+					string durationFriendly = duration > 1000 ? $"{duration / 1000}ms" : $"{duration}μs";
 
-                foreach (var (answer, index) in answers.Select((a, i) => (a, i)))
-                {
-                    string answerResult = ValidateExpectedAnswer(
-                        answers, daySolver, "SolvePartOne", answer, index);
+					var partResult = new PartResult(answer, expectedAnswer, answer == expectedAnswer, durationFriendly);
+					partTwoResults.Add(partResult);
+				}
+			}
 
-                    Console.WriteLine($"\t\tDataset {index + 1} Answer: {answerResult}");
-                }
+			stopwatch.Reset();
 
-                stopwatch.Reset();
-            }
-            if (settings.RunPartTwo)
-            {
-                List<(string Answer, long DurationTicks)> answers = new();
+			return (partOneResults, partTwoResults);
+		}
 
-                foreach (var partTwoData in PartTwoData)
-                {
-                    stopwatch.Start();
-                    var answer = daySolver.SolvePartOne(partTwoData);
-                    stopwatch.Stop();
-                    var duration = stopwatch.ElapsedTicks;
+		private IEnumerable<string> GetExpectedAnswers(Type dayType, string partName)
+		{
+			var expectedAnswers = dayType.GetMethod(partName)!
+				.GetCustomAttributes<AoCExpectedExampleAnswersAttribute>()!
+					.SelectMany(a => a.ExpectedExampleAnswers)
+					.ToList();
 
-                    answers.Add(new(answer, duration));
-                }
+			return expectedAnswers;
+		}
 
-                Console.WriteLine($"\tPart 2");
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "SYSLIB1045:Convert to 'GeneratedRegexAttribute'.", Justification = "Performance optimization not necessary")]
+		private List<IAoCDaySolver> GetAllDays(IEnumerable<string>? filteredDays = null)
+		{
+			var daySolverType = typeof(IAoCDaySolver);
+			List<IAoCDaySolver> daysToRun = new();
 
-                foreach (var (answer, index) in answers.Select((a, i) => (a, i)))
-                {
-                    string answerResult = ValidateExpectedAnswer(
-                        answers, daySolver, "SolvePartTwo", answer, index);
+			var allDays = daySolverType.Assembly.GetTypes()
+				.Where(type => daySolverType.IsAssignableFrom(type)
+				&& type.CustomAttributes.Any(a => a.AttributeType == typeof(AoCYearAttribute))
+				&& type.GetCustomAttribute<AoCYearAttribute>()!.Year == settings.YearToRun
+				&& !type.IsAbstract);
 
-                    Console.WriteLine($"\t\tDataset {index + 1} Answer: {answerResult}");
-                }
-            }
+			foreach (var day in allDays.Select(d => d.Name))
+			{
+				var className = day;
+				var namingPattern = new Regex(@"^Day[012]\d");
 
-            Console.WriteLine(new string('-', dayHeader.Length));
-            Console.WriteLine();
-        }
+				if (!namingPattern.IsMatch(className))
+				{
+					throw new AoCException($"Day class name does not match required pattern Day##: {className}");
+				}
+			}
 
-        private string ValidateExpectedAnswer(
-            IEnumerable<(string Answer, long Duration)> answers,
-            IAoCDaySolver daySolver,
-            string partName,
-            (string Answer, long DurationTicks) answer,
-            int index)
-        {
-            var expectedAnswers = daySolver.GetType().GetMethod(partName)!
-                .GetCustomAttributes<AoCExpectedExampleAnswersAttribute>()!
-                    .SelectMany(a => a.ExpectedExampleAnswers)
-                    .ToList();
-            var answerCount = answers.Count();
-            var expectedAnswerCount = expectedAnswers.Count;
+			if (filteredDays == null)
+			{
+				foreach (var day in allDays)
+				{
+					var dayToRun = (IAoCDaySolver)Activator.CreateInstance(day)!;
+					daysToRun.Add(dayToRun);
+				}
+			}
+			else
+			{
+				var selectedDays = allDays.Where(day =>
+					filteredDays.Any(d =>
+						d.Equals(day.Name, StringComparison.CurrentCultureIgnoreCase)));
 
-            if (answerCount != expectedAnswerCount)
-            {
-                throw new AoCException($"Expected answer count must match the provided number of answers.\n" +
-                    "Check your [ExpectedExampleAnswers()] attribute!\n" +
-                    $"Answers: {answerCount} ExpectedAnswers: {expectedAnswerCount}");
-            }
+				foreach (var day in selectedDays)
+				{
+					var dayToRun = (IAoCDaySolver)Activator.CreateInstance(day, inputReader)!;
 
-            string expectedanswer = expectedAnswers[index];
-            bool isExpectedAnswerCorrect = answer.Answer == expectedanswer;
-            string expectedAnswerResult;
-            if (answer.Answer != "Not Implemented" && settings.UseExampleData)
-            {
-                long answerMicroseconds = answer.DurationTicks / (TimeSpan.TicksPerMillisecond / 1000);
-                // Conver to milliseconds if long enough, otherwise microseconds
-                string answerString = answerMicroseconds > 1000 ? $"{answerMicroseconds / 1000}ms" : $"{answerMicroseconds}μs";
+					daysToRun.Add(dayToRun);
+				}
+			}
 
-                expectedAnswerResult = isExpectedAnswerCorrect ? $"(CORRECT)" : $"(INCORRECT)";
-                expectedAnswerResult = $"{expectedAnswerResult} (Duration: {answerString}) Expected: {expectedanswer} Actual: {answer.Answer}";
-            }
-            else
-            {
-                expectedAnswerResult = answer.Answer;
-            }
-
-            return expectedAnswerResult;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "SYSLIB1045:Convert to 'GeneratedRegexAttribute'.", Justification = "Performance optimization not necessary")]
-        private List<IAoCDaySolver> GetAllDays(IEnumerable<string>? filteredDays = null)
-        {
-            var daySolverType = typeof(IAoCDaySolver);
-
-            var allDays = daySolverType.Assembly.GetTypes()
-                .Where(type => daySolverType.IsAssignableFrom(type)
-                && type.CustomAttributes.Any(a => a.AttributeType == typeof(AoCYearAttribute))
-                && type.GetCustomAttribute<AoCYearAttribute>()!.Year == settings.YearToRun
-                && !type.IsAbstract);
-
-            foreach (var day in allDays.Select(d => d.Name))
-            {
-                var className = day;
-                var namingPattern = new Regex(@"^Day[012]\d");
-
-                if (!namingPattern.IsMatch(className))
-                {
-                    throw new AoCException($"Day class name does not match required pattern Day##: {className}");
-                }
-            }
-
-            List<IAoCDaySolver> daysToRun = new();
-
-            if (filteredDays == null)
-            {
-                foreach (var day in allDays)
-                {
-                    var dayToRun = (IAoCDaySolver)Activator.CreateInstance(day)!;
-                    daysToRun.Add(dayToRun);
-                }
-            }
-            else
-            {
-                var selectedDays = allDays.Where(day =>
-                    filteredDays.Any(d =>
-                        d.Equals(day.Name, StringComparison.CurrentCultureIgnoreCase)));
-
-                foreach (var day in selectedDays)
-                {
-                    var dayToRun = (IAoCDaySolver)Activator.CreateInstance(day, inputReader)!;
-
-                    daysToRun.Add(dayToRun);
-                }
-            }
-
-            return daysToRun;
-        }
-    }
+			return daysToRun;
+		}
+	}
 }

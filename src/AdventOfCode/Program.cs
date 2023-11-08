@@ -25,6 +25,7 @@ namespace AdventOfCode
 					});
 					services.AddTransient<AoCRunner>();
 					services.AddTransient<AoCInputReader>();
+					services.AddTransient<AoCResultsDisplay>();
 				})
 				.Build();
 
