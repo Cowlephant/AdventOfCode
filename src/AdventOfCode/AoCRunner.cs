@@ -87,6 +87,7 @@ namespace AdventOfCode
 			if (settings.RunPartTwo)
 			{
 				RunPart(daySolver, PartTwoData, partTwoResults, partTwoExpectedAnswers, isPartOne: false);
+				stopwatch.Reset();
 			}
 
 			stopwatch.Reset();
