@@ -27,16 +27,20 @@ namespace AdventOfCode.Core
 					var partOneTable = CreatePartTable();
 					var partOneNode = dayNode.AddNode("Part 1");
 					partOneNode.AddNode(partOneTable);
-					bool allPartOneCorrect = true;
+					var allPartOneCorrect = true;
+					var allPartOneWrong = true;
 
 					foreach (var partOneResult in result.PartOneResults)
 					{
-						CreatePartRow(partOneResult, partOneTable, out allPartOneCorrect);
+						CreatePartRow(partOneResult, partOneTable, out bool isAnswerCorrect);
+
+						allPartOneCorrect = allPartOneCorrect && isAnswerCorrect;
+						allPartOneWrong = allPartOneWrong && !isAnswerCorrect;
 					}
 
 					if (settings.UseExampleData)
 					{
-						StylizeSuccess(partOneTable, allPartOneCorrect);
+						StylizeTableSuccess(partOneTable, allPartOneCorrect, allPartOneWrong);
 					}
 				}
 
@@ -45,16 +49,20 @@ namespace AdventOfCode.Core
 					var partTwoNode = dayNode.AddNode("Part 2");
 					var partTwoTable = CreatePartTable();
 					partTwoNode.AddNode(partTwoTable);
-					bool allPartTwoCorrect = true;
+					var allPartTwoCorrect = true;
+					var allPartTwoWrong = true;
 
 					foreach (var partTwoResult in result.PartTwoResults)
 					{
-						CreatePartRow(partTwoResult, partTwoTable, out allPartTwoCorrect);
+						CreatePartRow(partTwoResult, partTwoTable, out bool isAnswerCorrect);
+
+						allPartTwoCorrect = allPartTwoCorrect && isAnswerCorrect;
+						allPartTwoWrong = allPartTwoWrong &&  !isAnswerCorrect;
 					}
 
 					if (settings.UseExampleData)
 					{
-						StylizeSuccess(partTwoTable, allPartTwoCorrect);
+						StylizeTableSuccess(partTwoTable, allPartTwoCorrect, allPartTwoWrong);
 					}
 				}
 			}
@@ -77,6 +85,7 @@ namespace AdventOfCode.Core
 					.Border(TableBorder.Rounded)
 					.LeftAligned()
 					.Collapse();
+				partTable.Columns[0].Width = 10;
 			}
 			else
 			{
@@ -92,7 +101,7 @@ namespace AdventOfCode.Core
 			return partTable;
 		}
 
-		private void CreatePartRow(PartResult partResult, Table partTable, out bool allAnswersCorrect)
+		private void CreatePartRow(PartResult partResult, Table partTable, out bool answerCorrect)
 		{
 			bool isImplemented = partResult.Answer != "Not Implemented";
 
@@ -113,22 +122,22 @@ namespace AdventOfCode.Core
 				partTable.AddRow(duration, partResult.Answer);
 			}
 
-			if (!partResult.answersMatch)
-			{
-				allAnswersCorrect = false;
-			}
-			else
-			{
-				allAnswersCorrect = true;
-			}
+			answerCorrect = partResult.answersMatch;
 		}
 
-		private void StylizeSuccess(Table table, bool isSuccessful)
+		private static void StylizeTableSuccess(Table table, bool isAllCorrect, bool isAllWrong)
 		{
-			if (isSuccessful)
+			// All correct
+			if (isAllCorrect && !isAllWrong)
 			{
 				table.BorderColor(Color.Green);
 			}
+			// Some correct
+			else if(!isAllCorrect && !isAllWrong)
+			{
+				table.BorderColor(Color.Yellow);
+			}
+			// All wrong
 			else
 			{
 				table.BorderColor(Color.Red);
