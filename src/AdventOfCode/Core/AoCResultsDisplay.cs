@@ -14,6 +14,12 @@ namespace AdventOfCode.Core
 
 		public void Display(IEnumerable<DayResult> results)
 		{
+			if (!results.Any())
+			{
+				AnsiConsole.MarkupLine($"No results found to run for year [red]{settings.YearToRun}[/]");
+				return;
+			}
+
 			var yearNode = new Tree($"Advent of Code {results.First().dayYear}");
 			var yearWrapper = new Padder(yearNode)
 				.PadLeft(5);
@@ -57,7 +63,7 @@ namespace AdventOfCode.Core
 						CreatePartRow(partTwoResult, partTwoTable, out bool isAnswerCorrect);
 
 						allPartTwoCorrect = allPartTwoCorrect && isAnswerCorrect;
-						allPartTwoWrong = allPartTwoWrong &&  !isAnswerCorrect;
+						allPartTwoWrong = allPartTwoWrong && !isAnswerCorrect;
 					}
 
 					if (settings.UseExampleData)
@@ -133,7 +139,7 @@ namespace AdventOfCode.Core
 				table.BorderColor(Color.Green);
 			}
 			// Some correct
-			else if(!isAllCorrect && !isAllWrong)
+			else if (!isAllCorrect && !isAllWrong)
 			{
 				table.BorderColor(Color.Yellow);
 			}

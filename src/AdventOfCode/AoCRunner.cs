@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace AdventOfCode
 {
-	internal sealed class AoCRunner
+	public sealed class AoCRunner
 	{
-		private readonly AoCSettings settings;
+		private AoCSettings settings;
 		private readonly AoCInputReader inputReader;
 		private readonly AoCResultsDisplay resultsDisplay;
 		private readonly Stopwatch stopwatch;
@@ -21,8 +21,14 @@ namespace AdventOfCode
 			stopwatch = new Stopwatch();
 		}
 
-		public void Run()
+		public void Run(AoCSettings? settings = null)
 		{
+			// If passed in settings, use those instead of the ones configured at startup
+			if (settings is not null)
+			{
+				this.settings = settings;
+			}
+
 			IEnumerable<DayResult> results = RunDays();
 			resultsDisplay.Display(results);
 		}
@@ -128,7 +134,6 @@ namespace AdventOfCode
 			return expectedAnswers;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "SYSLIB1045:Convert to 'GeneratedRegexAttribute'.", Justification = "Performance optimization not necessary")]
 		private List<IAoCDaySolver> GetAllDays(IEnumerable<string>? filteredDays = null)
 		{
 			var daySolverType = typeof(IAoCDaySolver);
