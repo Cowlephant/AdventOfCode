@@ -52,8 +52,8 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 					return 0;
 				}
 
-				AnsiConsole.MarkupLine($@"Generating solution file in\t {solutionPath}\{year}");
-				AnsiConsole.MarkupLine($@"Generating data files in\t {dataPath}\{year}");
+				AnsiConsole.MarkupLine($@"Generating solution file in{'\t'} {solutionPath}\{year}");
+				AnsiConsole.MarkupLine($@"Generating data files in{'\t'} {dataPath}\{year}");
 				CreateInputFiles(year, day);
 			}
 

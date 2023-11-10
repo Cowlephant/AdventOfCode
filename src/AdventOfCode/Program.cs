@@ -93,12 +93,13 @@ namespace AdventOfCode
 					.WithAlias("cls");
 				config.AddCommand<AddDayCommand>("add")
 						.WithDescription(
-							"Adds one, multiple or all day templates to your project.\n" +
+							"Adds one or more day template files to your project.\n" +
 							"If no year specified, current calendar year will be used.")
 						.WithAlias("create")
 						.WithAlias("new")
 						.WithExample("add -d 2")
-						.WithExample("add -y 2020 -d 2");
+						.WithExample("add -y 2023 -d 2")
+						.WithExample("add -y 2023 -d 1 -d 2 -d 3 -d 4 -d 5");
 				config.AddCommand<RunCommand>("run")
 					.WithAlias("solve")
 					.WithDescription("Runs your code with specified parameters to solve input.")
