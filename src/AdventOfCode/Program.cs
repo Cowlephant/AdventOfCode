@@ -36,7 +36,7 @@ namespace AdventOfCode
 
 			var registrar = host.Services.GetRequiredService<TypeRegistrar>();
 
-			RunCommandLineInterface(registrar);
+			RunCLI(registrar);
 		}
 
 		private static IConfigurationBuilder BuildConfiguration(this IConfigurationBuilder builder)
@@ -50,40 +50,10 @@ namespace AdventOfCode
 			return builder;
 		}
 
-		private static void RunCommandLineInterface(TypeRegistrar registrar)
+		private static void RunCLI(TypeRegistrar registrar)
 		{
 			var app = new CommandApp(registrar);
-			app.Configure(config =>
-			{
-				config.SetApplicationName(string.Empty);
-			});
-
-			app.Configure(config =>
-			{
-				config.AddCommand<ExitCommand>("exit")
-					.WithDescription("Exits the application. Use \"quit\" \"exit\" \"stop\" \"end\" or \"q\"")
-					.WithAlias("quit")
-					.WithAlias("stop")
-					.WithAlias("end")
-					.WithAlias("q");
-				config.AddCommand<ClearCommand>("clear")
-					.WithDescription("Clears the console.")
-					.WithAlias("cls");
-				config.AddBranch<AddDaySettings>("add", add =>
-				{
-					add.AddCommand<AddDayCommand>("day")
-						.WithDescription("Adds one, multiple or all day templates to your project.")
-						.WithExample("add day -n Day01")
-						.WithExample("add day -n day7");
-				});
-				config.AddCommand<RunCommand>("run")
-					.WithAlias("solve")
-					.WithDescription("Runs your code with specified parameters to solve input.")
-					.WithExample("run -d 2")
-					.WithExample("run --year 2023 -d 1 -d 2 --real")
-					.WithExample("solve -y 2023 -p 1")
-					.WithExample("solve -y 2023 -p 2 --day Day01");
-			});
+			ConfigureCLI(app);
 
 			while (true)
 			{
@@ -101,6 +71,42 @@ namespace AdventOfCode
 					}
 				}
 			}
+		}
+
+		private static void ConfigureCLI(CommandApp app)
+		{
+			app.Configure(config =>
+			{
+				config.SetApplicationName(string.Empty);
+			});
+
+			app.Configure(config =>
+			{
+				config.AddCommand<ExitCommand>("exit")
+					.WithDescription("Exits the application. Use \"quit\" \"exit\" \"stop\" \"end\" or \"q\"")
+					.WithAlias("quit")
+					.WithAlias("stop")
+					.WithAlias("end")
+					.WithAlias("q");
+				config.AddCommand<ClearCommand>("clear")
+					.WithDescription("Clears the console.")
+					.WithAlias("cls");
+				config.AddCommand<AddDayCommand>("add")
+						.WithDescription(
+							"Adds one, multiple or all day templates to your project.\n" +
+							"If no year specified, current calendar year will be used.")
+						.WithAlias("create")
+						.WithAlias("new")
+						.WithExample("add -d 2")
+						.WithExample("add -y 2020 -d 2");
+				config.AddCommand<RunCommand>("run")
+					.WithAlias("solve")
+					.WithDescription("Runs your code with specified parameters to solve input.")
+					.WithExample("run -d 2")
+					.WithExample("run --year 2023 -d 1 -d 2 --real")
+					.WithExample("solve -y 2023 -p 1")
+					.WithExample("solve -y 2023 -p 2 --day 1");
+			});
 		}
 	}
 }

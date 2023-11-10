@@ -8,14 +8,8 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 	{
 		public override int Execute([NotNull] CommandContext context)
 		{
-			if (!AnsiConsole.Confirm("Are you sure you wish to exit?"))
-			{
-				return 0;
-			}
-			else
-			{
-				return 2;
-			}
+			AnsiConsole.Markup("[yellow]Exiting...[/]");
+			return 2;
 		}
 	}
 }

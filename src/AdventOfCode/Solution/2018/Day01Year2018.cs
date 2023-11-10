@@ -2,8 +2,8 @@
 
 namespace AdventOfCode.Solution
 {
-	[AoCYear(2018)]
-	public sealed class Day01 : IAoCDaySolver
+	[AoCYearDay(2018, 1)]
+	public sealed class Day01Year2018 : IAoCDaySolver
 	{
 		[AoCExpectedExampleAnswers("3", "0", "-6")]
 		public string SolvePartOne(List<string> input)

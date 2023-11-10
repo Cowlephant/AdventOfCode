@@ -20,13 +20,13 @@ namespace AdventOfCode.Core
 				return;
 			}
 
-			var yearNode = new Tree($"Advent of Code {results.First().dayYear}");
+			var yearNode = new Tree($"Advent of Code {results.First().DayYear}");
 			var yearWrapper = new Padder(yearNode)
 				.PadLeft(5);
 
 			foreach (var result in results)
 			{
-				var dayNode = yearNode.AddNode(result.dayName);
+				var dayNode = yearNode.AddNode(result.DayName);
 
 				if (settings.RunPartOne)
 				{
@@ -111,7 +111,7 @@ namespace AdventOfCode.Core
 		{
 			bool isImplemented = partResult.Answer != "Not Implemented";
 
-			var resultStatus = partResult.answersMatch ? "[green]CORRECT[/]" : "[red]INCORRECT[/]";
+			var resultStatus = partResult.AnswersMatch ? "[green]CORRECT[/]" : "[red]INCORRECT[/]";
 			resultStatus = isImplemented ? resultStatus : string.Empty;
 			var duration = isImplemented ? partResult.Duration : string.Empty;
 
@@ -128,7 +128,7 @@ namespace AdventOfCode.Core
 				partTable.AddRow(duration, partResult.Answer);
 			}
 
-			answerCorrect = partResult.answersMatch;
+			answerCorrect = partResult.AnswersMatch;
 		}
 
 		private static void StylizeTableSuccess(Table table, bool isAllCorrect, bool isAllWrong)

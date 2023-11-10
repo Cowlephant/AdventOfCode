@@ -1,12 +1,15 @@
 ﻿namespace AdventOfCode.Core
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public sealed class AoCYearAttribute : Attribute
+    public sealed class AoCYearDayAttribute : Attribute
     {
         public int Year { get; private set; }
-        public AoCYearAttribute(int year)
+        public int Day { get; private set; }
+
+        public AoCYearDayAttribute(int year, int day)
         {
             Year = year;
+            Day = day;
         }
     }
 }

@@ -43,7 +43,7 @@ namespace AdventOfCode
 				{
 					var (partOneResults, partTwoResults) = RunParts(day);
 					var dayResult = new DayResult(
-						day.GetType().Name,
+						$"Day {day.GetType().GetCustomAttribute<AoCYearDayAttribute>()!.Day}",
 						settings.YearToRun,
 						settings.UseExampleData,
 						partOneResults,
@@ -57,7 +57,7 @@ namespace AdventOfCode
 				{
 					var (partOneResults, partTwoResults) = RunParts(day);
 					var dayResult = new DayResult(
-						day.GetType().Name,
+						$"Day {day.GetType().GetCustomAttribute<AoCYearDayAttribute>()!.Day}",
 						settings.YearToRun,
 						settings.UseExampleData,
 						partOneResults,
@@ -79,7 +79,8 @@ namespace AdventOfCode
 			List<PartResult> partOneResults = new();
 			List<PartResult> partTwoResults = new();
 
-			string dayName = daySolver.GetType().Name;
+			var day = daySolver.GetType().GetCustomAttribute<AoCYearDayAttribute>()!.Day;
+			string dayName = $"Day{day:D2}";
 			var (PartOneData, PartTwoData) = inputReader.GetData(dayName);
 
 			var partOneExpectedAnswers = GetExpectedAnswers(daySolver.GetType(), "SolvePartOne");
@@ -134,48 +135,25 @@ namespace AdventOfCode
 			return expectedAnswers;
 		}
 
-		private List<IAoCDaySolver> GetAllDays(IEnumerable<string>? filteredDays = null)
+		private List<IAoCDaySolver> GetAllDays(IEnumerable<int>? filteredDays = null)
 		{
+			filteredDays ??= Enumerable.Empty<int>();
 			var daySolverType = typeof(IAoCDaySolver);
 			List<IAoCDaySolver> daysToRun = new();
 
-			var allDays = daySolverType.Assembly.GetTypes()
+			var allFilteredDays = daySolverType.Assembly.GetTypes()
 				.Where(type => daySolverType.IsAssignableFrom(type)
-				&& type.CustomAttributes.Any(a => a.AttributeType == typeof(AoCYearAttribute))
-				&& type.GetCustomAttribute<AoCYearAttribute>()!.Year == settings.YearToRun
+				&& type.CustomAttributes.Any(a => a.AttributeType == typeof(AoCYearDayAttribute))
+				&& type.GetCustomAttribute<AoCYearDayAttribute>()!.Year == settings.YearToRun
+				&& filteredDays.Contains(type.GetCustomAttribute<AoCYearDayAttribute>()!.Day)
 				&& !type.IsAbstract);
 
-			foreach (var day in allDays.Select(d => d.Name))
+
+			foreach (var day in allFilteredDays)
 			{
-				var className = day;
-				var namingPattern = new Regex(@"^Day[012]\d");
+				var dayToRun = (IAoCDaySolver)Activator.CreateInstance(day)!;
 
-				if (!namingPattern.IsMatch(className))
-				{
-					throw new AoCException($"Day class name does not match required pattern Day##: {className}");
-				}
-			}
-
-			if (filteredDays == null)
-			{
-				foreach (var day in allDays)
-				{
-					var dayToRun = (IAoCDaySolver)Activator.CreateInstance(day)!;
-					daysToRun.Add(dayToRun);
-				}
-			}
-			else
-			{
-				var selectedDays = allDays.Where(day =>
-					filteredDays.Any(d =>
-						d.Equals(day.Name, StringComparison.CurrentCultureIgnoreCase)));
-
-				foreach (var day in selectedDays)
-				{
-					var dayToRun = (IAoCDaySolver)Activator.CreateInstance(day)!;
-
-					daysToRun.Add(dayToRun);
-				}
+				daysToRun.Add(dayToRun);
 			}
 
 			return daysToRun;

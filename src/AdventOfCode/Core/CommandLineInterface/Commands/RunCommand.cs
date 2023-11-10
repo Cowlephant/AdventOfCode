@@ -17,7 +17,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 		public bool Real { get; set; }
 
 		[CommandOption("-d|--day <DAY>")]
-		public string[]? Day { get; set; }
+		public int[] Day { get; set; } = null!;
 
 		[CommandOption("-p|--part <PART>")]
 		public string? Part { get; set; }
@@ -67,7 +67,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 			runner.Run(runnerSettings);
 		}
 
-		private void RunSelectedDays(string[] daysToRun)
+		private void RunSelectedDays(int[] daysToRun)
 		{
 			ConfigureSettings(runAllDays: false);
 
@@ -117,27 +117,21 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 			return (true, true);
 		}
 
-		private static IEnumerable<string> ProcessDaysInput(string[]? daysToRun)
+		private static IEnumerable<int> ProcessDaysInput(int[]? daysToRun)
 		{
 			if (daysToRun is null || daysToRun.Length == 0)
 			{
-				return Enumerable.Empty<string>();
+				return Enumerable.Empty<int>();
 			}
 
-			var regex = new Regex(@"\d{1,2}$");
-			List<string> processedDays = new();
-			foreach (var dayInput in daysToRun)
+			List<int> processedDays = new();
+			foreach (var day in daysToRun)
 			{
-				var match = regex.Match(dayInput);
-
-				int day = 0;
-				var isValidDay = match.Success
-					&& int.TryParse(match.Value, out day)
-					&& Enumerable.Range(1, 25).Contains(day);
+				var isValidDay = Enumerable.Range(1, 25).Contains(day);
 
 				if (isValidDay)
 				{
-					processedDays.Add($"Day{day:D2}");
+					processedDays.Add(day);
 				}
 			}
 
