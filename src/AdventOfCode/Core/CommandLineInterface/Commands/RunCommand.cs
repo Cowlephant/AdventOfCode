@@ -20,7 +20,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 		public int[] Day { get; set; } = null!;
 
 		[CommandOption("-p|--part <PART>")]
-		public string? Part { get; set; }
+		public int Part { get; set; }
 
 		[CommandOption("-y|--year <YEAR>")]
 		public int Year { get; set; }
@@ -78,7 +78,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 
 		private void ConfigureSettings(bool runAllDays)
 		{
-			var (runPartOne, runPartTwo) = ProcessPartsInput(runSettings.Part ?? string.Empty);
+			var (runPartOne, runPartTwo) = ProcessPartsInput(runSettings.Part);
 			runnerSettings.RunAllDays = runAllDays;
 			runnerSettings.DaysToRun = ProcessDaysInput(runSettings.Day);
 			runnerSettings.RunPartOne = runPartOne;
@@ -96,25 +96,14 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 			}
 		}
 
-		private static (bool RunPartOne, bool RunPartTwo) ProcessPartsInput(string part)
+		private static (bool RunPartOne, bool RunPartTwo) ProcessPartsInput(int part)
 		{
-			var regex = new Regex(@"([(one)(two)12])$", RegexOptions.IgnoreCase);
-
-			var match = regex.Match(part);
-
-			if (match.Success)
+			return part switch
 			{
-				return match.Value.ToLowerInvariant() switch
-				{
-					"one" => (true, false),
-					"1" => (true, false),
-					"two" => (false, true),
-					"2" => (false, true),
-					_ => (true, true)
-				};
-			}
-
-			return (true, true);
+				1 => (true, false),
+				2 => (false, true),
+				_ => (true, true)
+			};
 		}
 
 		private static IEnumerable<int> ProcessDaysInput(int[]? daysToRun)
