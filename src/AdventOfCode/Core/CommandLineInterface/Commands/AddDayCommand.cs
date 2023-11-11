@@ -33,7 +33,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 		[SuppressMessage("Minor Code Smell", "S6605:Collection-specific \"Exists\" method should be used instead of the \"Any\" extension", Justification = "Not applicable")]
 		public override int Execute([NotNull] CommandContext context, [NotNull] AddDaySettings settings)
 		{
-			if (settings.Day.Any(d => !Enumerable.Range(1, 25).Contains(d)))
+			if (settings.Day.Any(d => d < 1 || d > 25))
 			{
 				AnsiConsole.MarkupLine("[yellow]Days must be within range of 1-25[/]");
 				return 0;

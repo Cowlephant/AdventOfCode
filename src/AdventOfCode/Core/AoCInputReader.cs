@@ -40,7 +40,7 @@
                     if (exampleLineDelimiters.Contains(line.ToLowerInvariant()))
                     {
                         // Only if we have any data do we need to add and reset it
-                        if (currentExampleDataSet.Any())
+                        if (currentExampleDataSet.Count > 0)
                         {
                             switch (currentPart)
                             {
@@ -66,7 +66,7 @@
                 }
 
                 // We've reached the end of the file, add our last data sets
-                if (currentExampleDataSet.Any())
+                if (currentExampleDataSet.Count > 0)
                 {
                     if (currentPart == PartOneDelimiter)
                     {

@@ -120,7 +120,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 			List<int> processedDays = new();
 			foreach (var day in daysToRun)
 			{
-				var isValidDay = Enumerable.Range(1, 25).Contains(day);
+				var isValidDay = day >= 1 && day <=25;
 
 				if (isValidDay)
 				{
