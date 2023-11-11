@@ -23,14 +23,16 @@ namespace AdventOfCode
 			var host = Host.CreateDefaultBuilder()
 				.ConfigureServices((context, services) =>
 				{
-					services.AddSingleton(serviceProvider =>
-					{
-						return builder.GetSection(nameof(AoCSettings)).Get<AoCSettings>()!;
-					});
-					services.AddTransient<AoCRunner>();
-					services.AddTransient<AoCInputReader>();
-					services.AddTransient<AoCResultsDisplay>();
-					services.AddSingleton(new TypeRegistrar(services));
+					services
+						.AddHttpClient()
+						.AddSingleton(serviceProvider =>
+						{
+							return builder.GetSection(nameof(AoCSettings)).Get<AoCSettings>()!;
+						})
+						.AddTransient<AoCRunner>()
+						.AddTransient<AoCInputReader>()
+						.AddTransient<AoCResultsDisplay>()
+						.AddSingleton(new TypeRegistrar(services));
 				})
 				.Build();
 
@@ -45,6 +47,7 @@ namespace AdventOfCode
 			builder.SetBasePath(Directory.GetCurrentDirectory())
 				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
 				.AddJsonFile($"appsettings.{environment}.json", optional: true)
+				.AddUserSecrets<AoCRunner>()
 				.AddEnvironmentVariables();
 
 			return builder;
@@ -107,6 +110,12 @@ namespace AdventOfCode
 					.WithExample("run --year 2023 -d 1 -d 2 --real")
 					.WithExample("solve -y 2023 -p 1")
 					.WithExample("solve -y 2023 -p 2 --day 1");
+				config.AddCommand<InputCommand>("input")
+					.WithDescription("" +
+					"Downloads the input for given year, day and part from Advent of Code " +
+					"and adds it to the appropriate input file. This will overwrite existing data.\n\n" +
+					"[red]Be sure to use User Secrets or environment variables and do not commit any secrets.[/]")
+					.WithExample("input -y 2023 -d 1");
 			});
 		}
 	}

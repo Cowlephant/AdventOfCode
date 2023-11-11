@@ -5,6 +5,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<UserSecretsId>6ca749a1-eed8-488e-b6b4-3d27627d5416</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -12,6 +13,15 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
+
+	<ItemGroup>
+		<AssetsSourceFiles Include="Core/Assets/*.*" />
+	</ItemGroup>
+
+	<Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+		<Copy SourceFiles="@(AssetsSourceFiles)" DestinationFolder="$(OutDir)\Assets" SkipUnchangedFiles="true" />
+	</Target>
+	
 	<ItemGroup>
 		<Content Include="Data\**\**">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -19,15 +29,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-		<PackageReference Include="Spectre.Console" Version="0.47.0" />
-		<PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0-rc.2.23479.6" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0-rc.2.23479.6" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0-rc.2.23479.6" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0-rc.2.23479.6" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0-rc.2.23479.6" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.2.23479.6" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0-rc.2.23479.6" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0-rc.2.23479.6" />
+		<PackageReference Include="Spectre.Console" Version="0.47.1-preview.0.36" />
+		<PackageReference Include="Spectre.Console.Cli" Version="0.47.1-preview.0.36" />
+		<PackageReference Include="Spectre.Console.ImageSharp" Version="0.47.1-preview.0.36" />
 		<PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Core\Assets\" />
 	</ItemGroup>
 
 </Project>

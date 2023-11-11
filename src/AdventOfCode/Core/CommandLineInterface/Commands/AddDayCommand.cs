@@ -2,7 +2,6 @@
 using Spectre.Console.Cli;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace AdventOfCode.Core.CommandLineInterface.Commands
 {
@@ -51,8 +50,8 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 				if (DoAnyFilesExist(year, day) &&
 					!AnsiConsole.Confirm(rewritePrompt, defaultValue: false))
 				{
-					AnsiConsole.MarkupLine("[red]Aborting...[/]");
-					return 0;
+					AnsiConsole.MarkupLine($"[yellow]Skipping Year {year} Day {settings.Day}[/]");
+					continue;
 				}
 
 				AnsiConsole.MarkupLine($@"Generating solution file in{'\t'} {solutionPath}\{year}");

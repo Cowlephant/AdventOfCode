@@ -1,5 +1,4 @@
-﻿using Spectre.Console;
-using Spectre.Console.Cli;
+﻿using Spectre.Console.Cli;
 using System.Diagnostics.CodeAnalysis;
 
 namespace AdventOfCode.Core.CommandLineInterface.Commands

@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace AdventOfCode
 {

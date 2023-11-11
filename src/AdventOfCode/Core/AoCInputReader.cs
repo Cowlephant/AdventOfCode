@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace AdventOfCode.Core
+﻿namespace AdventOfCode.Core
 {
     public sealed class AoCInputReader
     {

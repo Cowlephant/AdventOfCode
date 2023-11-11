@@ -2,7 +2,8 @@
 {
     public sealed class AoCSettings
     {
-        public bool UseExampleData { get; set; } = false;
+        public string PersonalToken { get; set; } = "<DO_NOT_COMMIT_ME>";
+		public bool UseExampleData { get; set; } = false;
         public bool RunAllDays { get; set; } = true;
         public int YearToRun { get; set; }
         public IEnumerable<int> DaysToRun { get; set; } = new List<int>();
