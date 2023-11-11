@@ -9,20 +9,25 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 	public sealed class RunSettings : CommandSettings
 	{
 		[CommandOption("-a|--all <ALL>")]
+		[Description("Runs every day found for the year. Overrides any specific days option.")]
 		[DefaultValue(false)]
 		public bool All { get; set; }
 
 		[CommandOption("-r|--real <REAL>")]
+		[Description("Runs against the real input data insead of Example data. Disabled by default.")]
 		[DefaultValue(false)]
 		public bool Real { get; set; }
 
 		[CommandOption("-d|--day <DAY>")]
+		[Description("Which days should be run.")]
 		public int[] Day { get; set; } = null!;
 
 		[CommandOption("-p|--part <PART>")]
+		[Description("Which part should be run. If not specified, uses configuration insead, or runs both parts as a last resort.")]
 		public int Part { get; set; }
 
 		[CommandOption("-y|--year <YEAR>")]
+		[Description("The year to run. If not specified, uses configuration insead, or current calendar year as a last resort.")]
 		public int Year { get; set; }
 	}
 
@@ -81,8 +86,8 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 			var (runPartOne, runPartTwo) = ProcessPartsInput(runSettings.Part);
 			runnerSettings.RunAllDays = runAllDays;
 			runnerSettings.DaysToRun = ProcessDaysInput(runSettings.Day);
-			runnerSettings.RunPartOne = runPartOne;
-			runnerSettings.RunPartTwo = runPartTwo;
+			runnerSettings.RunPartOne = runSettings.Part == 0 ? runnerSettings.RunPartOne : runPartOne;
+			runnerSettings.RunPartTwo = runSettings.Part == 0 ? runnerSettings.RunPartTwo : runPartTwo;
 			runnerSettings.UseExampleData = !runSettings.Real;
 			runnerSettings.YearToRun = runSettings.Year > 0 ? runSettings.Year : runnerSettings.YearToRun;
 

@@ -13,16 +13,19 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 
 		[CommandOption("-y|--year <YEAR>")]
 		[DefaultValue(0)]
+		[Description("The year to create the files for. If not provided, uses value from configuration instead.")]
 		public int Year { get; set; }
 	}
 
 	public sealed class AddDayCommand : Command<AddDaySettings>
 	{
+		private readonly AoCSettings runnerSettings;
 		private readonly string solutionPath;
 		private readonly string dataPath;
 
 		public AddDayCommand(AoCSettings runnerSettings)
 		{
+			this.runnerSettings = runnerSettings;
 			var projectDirectory = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.FullName ?? string.Empty;
 			solutionPath = $"{Path.Combine(projectDirectory, $@"{runnerSettings.SolutionFolderPath}")}";
 			dataPath = $"{Path.Combine(projectDirectory, $@"{runnerSettings.DataFolderPath}")}";
@@ -37,7 +40,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 				return 0;
 			}
 
-			int year = settings.Year > 0 ? settings.Year : DateTime.Now.Year;
+			int year = settings.Year == 0 ? runnerSettings.YearToRun : settings.Year;
 
 			foreach (var day in settings.Day)
 			{
