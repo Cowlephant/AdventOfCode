@@ -15,14 +15,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<AssetsSourceFiles Include="Core/Assets/*.*" />
-	</ItemGroup>
-
-	<Target Name="CopyCustomContent" AfterTargets="AfterBuild">
-		<Copy SourceFiles="@(AssetsSourceFiles)" DestinationFolder="$(OutDir)\Assets" SkipUnchangedFiles="true" />
-	</Target>
-	
-	<ItemGroup>
 		<Content Include="Data\**\**">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
@@ -41,10 +33,6 @@
 		<PackageReference Include="Spectre.Console.Cli" Version="0.47.1-preview.0.36" />
 		<PackageReference Include="Spectre.Console.ImageSharp" Version="0.47.1-preview.0.36" />
 		<PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Core\Assets\" />
 	</ItemGroup>
 
 </Project>

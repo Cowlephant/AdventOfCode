@@ -96,13 +96,6 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 				var isBeforeHalloween = date.Month == 10 && date.Day < 31;
 				if (isBeforeHalloween)
 				{
-					var pumpkin = new CanvasImage(@"Assets\pumpkin.png");
-					pumpkin.MaxWidth(32);
-					var padder = new Padder(pumpkin)
-							.PadLeft(20);
-
-					AnsiConsole.Write(padder);
-
 					return ValidationResult.Error("It's not December! You haven't even carved a pumpkin yet!");
 				}
 
@@ -115,13 +108,6 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 					var isBeforeThanksgiving = date.Day < thanksgivingDay.Day;
 					if (isBeforeThanksgiving)
 					{
-						var turkey = new CanvasImage(@"Assets\turkey.png");
-						turkey.MaxWidth(32);
-						var padder = new Padder(turkey)
-							.PadLeft(20);
-
-						AnsiConsole.Write(padder);
-
 						return ValidationResult.Error("It's not December! You haven't even carved a turkey yet!");
 					}
 				}

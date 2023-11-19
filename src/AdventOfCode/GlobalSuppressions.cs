@@ -4,4 +4,4 @@
 // a specific target and scoped to a namespace, type, member, etc.
 
 using System.Diagnostics.CodeAnalysis;
-
+[assembly: SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "Not desired", Scope = "module")]
