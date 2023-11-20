@@ -1,153 +1,152 @@
 ﻿using Spectre.Console;
 using System.Text.Json;
 
-namespace AdventOfCode.Core
+namespace AdventOfCode.Core;
+
+internal sealed class AoCResultsDisplay
 {
-	public sealed class AoCResultsDisplay
+	private readonly AoCSettings settings;
+
+	public AoCResultsDisplay(AoCSettings settings)
 	{
-		private readonly AoCSettings settings;
+		this.settings = settings;
+	}
 
-		public AoCResultsDisplay(AoCSettings settings)
+	public void Display(IEnumerable<DayResult> results)
+	{
+		if (!results.Any())
 		{
-			this.settings = settings;
+			AnsiConsole.MarkupLine($"No results found to run for year [red]{settings.YearToRun}[/]");
+			return;
 		}
 
-		public void Display(IEnumerable<DayResult> results)
+		var yearNode = new Tree($"Advent of Code {results.First().DayYear}");
+		var yearWrapper = new Padder(yearNode)
+			.PadLeft(5);
+
+		foreach (var result in results)
 		{
-			if (!results.Any())
+			var dayNode = yearNode.AddNode(result.DayName);
+
+			if (settings.RunPartOne)
 			{
-				AnsiConsole.MarkupLine($"No results found to run for year [red]{settings.YearToRun}[/]");
-				return;
-			}
+				var partOneTable = CreatePartTable();
+				var partOneNode = dayNode.AddNode("Part 1");
+				partOneNode.AddNode(partOneTable);
+				var allPartOneCorrect = true;
+				var allPartOneWrong = true;
 
-			var yearNode = new Tree($"Advent of Code {results.First().DayYear}");
-			var yearWrapper = new Padder(yearNode)
-				.PadLeft(5);
-
-			foreach (var result in results)
-			{
-				var dayNode = yearNode.AddNode(result.DayName);
-
-				if (settings.RunPartOne)
+				foreach (var partOneResult in result.PartOneResults)
 				{
-					var partOneTable = CreatePartTable();
-					var partOneNode = dayNode.AddNode("Part 1");
-					partOneNode.AddNode(partOneTable);
-					var allPartOneCorrect = true;
-					var allPartOneWrong = true;
+					CreatePartRow(partOneResult, partOneTable, out bool isAnswerCorrect);
 
-					foreach (var partOneResult in result.PartOneResults)
-					{
-						CreatePartRow(partOneResult, partOneTable, out bool isAnswerCorrect);
-
-						allPartOneCorrect = allPartOneCorrect && isAnswerCorrect;
-						allPartOneWrong = allPartOneWrong && !isAnswerCorrect;
-					}
-
-					if (settings.UseExampleData)
-					{
-						StylizeTableSuccess(partOneTable, allPartOneCorrect, allPartOneWrong);
-					}
+					allPartOneCorrect = allPartOneCorrect && isAnswerCorrect;
+					allPartOneWrong = allPartOneWrong && !isAnswerCorrect;
 				}
 
-				if (settings.RunPartTwo)
+				if (settings.UseExampleData)
 				{
-					var partTwoNode = dayNode.AddNode("Part 2");
-					var partTwoTable = CreatePartTable();
-					partTwoNode.AddNode(partTwoTable);
-					var allPartTwoCorrect = true;
-					var allPartTwoWrong = true;
-
-					foreach (var partTwoResult in result.PartTwoResults)
-					{
-						CreatePartRow(partTwoResult, partTwoTable, out bool isAnswerCorrect);
-
-						allPartTwoCorrect = allPartTwoCorrect && isAnswerCorrect;
-						allPartTwoWrong = allPartTwoWrong && !isAnswerCorrect;
-					}
-
-					if (settings.UseExampleData)
-					{
-						StylizeTableSuccess(partTwoTable, allPartTwoCorrect, allPartTwoWrong);
-					}
+					StylizeTableSuccess(partOneTable, allPartOneCorrect, allPartOneWrong);
 				}
 			}
 
-			AnsiConsole.Write(yearWrapper);
+			if (settings.RunPartTwo)
+			{
+				var partTwoNode = dayNode.AddNode("Part 2");
+				var partTwoTable = CreatePartTable();
+				partTwoNode.AddNode(partTwoTable);
+				var allPartTwoCorrect = true;
+				var allPartTwoWrong = true;
+
+				foreach (var partTwoResult in result.PartTwoResults)
+				{
+					CreatePartRow(partTwoResult, partTwoTable, out bool isAnswerCorrect);
+
+					allPartTwoCorrect = allPartTwoCorrect && isAnswerCorrect;
+					allPartTwoWrong = allPartTwoWrong && !isAnswerCorrect;
+				}
+
+				if (settings.UseExampleData)
+				{
+					StylizeTableSuccess(partTwoTable, allPartTwoCorrect, allPartTwoWrong);
+				}
+			}
 		}
 
-		private Table CreatePartTable()
+		AnsiConsole.Write(yearWrapper);
+	}
+
+	private Table CreatePartTable()
+	{
+		Table partTable;
+
+		if (settings.UseExampleData)
 		{
-			Table partTable;
-
-			if (settings.UseExampleData)
-			{
-				partTable = new Table()
-					.RoundedBorder()
-					.AddColumn("Result", options => { options.Alignment = Justify.Left; })
-					.AddColumn("Duration", options => { options.Alignment = Justify.Right; })
-					.AddColumn("Answer", options => { options.Alignment = Justify.Right; })
-					.AddColumn("Expected", options => { options.Alignment = Justify.Right; })
-					.Border(TableBorder.Rounded)
-					.LeftAligned()
-					.Collapse();
-				partTable.Columns[0].Width = 10;
-			}
-			else
-			{
-				partTable = new Table()
-					.RoundedBorder()
-					.AddColumn("Duration", options => { options.Alignment = Justify.Right; })
-					.AddColumn("Answer", options => { options.Alignment = Justify.Right; })
-					.Border(TableBorder.Rounded)
-					.LeftAligned()
-					.Collapse();
-			}
-
-			return partTable;
+			partTable = new Table()
+				.RoundedBorder()
+				.AddColumn("Result", options => { options.Alignment = Justify.Left; })
+				.AddColumn("Duration", options => { options.Alignment = Justify.Right; })
+				.AddColumn("Answer", options => { options.Alignment = Justify.Right; })
+				.AddColumn("Expected", options => { options.Alignment = Justify.Right; })
+				.Border(TableBorder.Rounded)
+				.LeftAligned()
+				.Collapse();
+			partTable.Columns[0].Width = 10;
+		}
+		else
+		{
+			partTable = new Table()
+				.RoundedBorder()
+				.AddColumn("Duration", options => { options.Alignment = Justify.Right; })
+				.AddColumn("Answer", options => { options.Alignment = Justify.Right; })
+				.Border(TableBorder.Rounded)
+				.LeftAligned()
+				.Collapse();
 		}
 
-		private void CreatePartRow(PartResult partResult, Table partTable, out bool answerCorrect)
+		return partTable;
+	}
+
+	private void CreatePartRow(PartResult partResult, Table partTable, out bool answerCorrect)
+	{
+		bool isImplemented = partResult.Answer != "Not Implemented";
+
+		var resultStatus = partResult.AnswersMatch ? "[green]CORRECT[/]" : "[red]INCORRECT[/]";
+		resultStatus = isImplemented ? resultStatus : string.Empty;
+		var duration = isImplemented ? partResult.Duration : string.Empty;
+
+		if (settings.UseExampleData)
 		{
-			bool isImplemented = partResult.Answer != "Not Implemented";
-
-			var resultStatus = partResult.AnswersMatch ? "[green]CORRECT[/]" : "[red]INCORRECT[/]";
-			resultStatus = isImplemented ? resultStatus : string.Empty;
-			var duration = isImplemented ? partResult.Duration : string.Empty;
-
-			if (settings.UseExampleData)
-			{
-				partTable.AddRow(
-					resultStatus,
-					duration,
-					partResult.Answer,
-					partResult.ExpectedAnswer);
-			}
-			else
-			{
-				partTable.AddRow(duration, partResult.Answer);
-			}
-
-			answerCorrect = partResult.AnswersMatch;
+			partTable.AddRow(
+				resultStatus,
+				duration,
+				partResult.Answer,
+				partResult.ExpectedAnswer);
+		}
+		else
+		{
+			partTable.AddRow(duration, partResult.Answer);
 		}
 
-		private static void StylizeTableSuccess(Table table, bool isAllCorrect, bool isAllWrong)
+		answerCorrect = partResult.AnswersMatch;
+	}
+
+	private static void StylizeTableSuccess(Table table, bool isAllCorrect, bool isAllWrong)
+	{
+		// All correct
+		if (isAllCorrect && !isAllWrong)
 		{
-			// All correct
-			if (isAllCorrect && !isAllWrong)
-			{
-				table.BorderColor(Color.Green);
-			}
-			// Some correct
-			else if (!isAllCorrect && !isAllWrong)
-			{
-				table.BorderColor(Color.Yellow);
-			}
-			// All wrong
-			else
-			{
-				table.BorderColor(Color.Red);
-			}
+			table.BorderColor(Color.Green);
+		}
+		// Some correct
+		else if (!isAllCorrect && !isAllWrong)
+		{
+			table.BorderColor(Color.Yellow);
+		}
+		// All wrong
+		else
+		{
+			table.BorderColor(Color.Red);
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace AdventOfCode.Core.CommandLineInterface;
 
-public sealed class TypeResolver : ITypeResolver, IDisposable
+internal sealed class TypeResolver : ITypeResolver, IDisposable
 {
 	private readonly IServiceProvider _provider;
 

@@ -1,9 +1,8 @@
-﻿namespace AdventOfCode.Core
+﻿namespace AdventOfCode.Core;
+
+public sealed class AoCException : Exception
 {
-    public sealed class AoCException : Exception
+    public AoCException(string? message) : base(message)
     {
-        public AoCException(string? message) : base(message)
-        {
-        }
     }
 }
