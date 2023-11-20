@@ -44,19 +44,18 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 
 			foreach (var day in settings.Day)
 			{
+				string rewritePrompt = $"[yellow]Files already exist for Year {year} Day {day}. " +
+					$"ARE YOU SURE YOU WISH TO[/] [red]OVERWRITE ALL CONTENTS[/]?";
 
-				string rewritePrompt = $"Files already exist for Year {year} Day {settings.Day}. " +
-					$"ARE YOU SURE YOU WISH TO [red]OVERWRITE ALL CONTENTS[/]?";
-
-				if (DoAnyFilesExist(year, day) &&
-					!AnsiConsole.Confirm(rewritePrompt, defaultValue: false))
+				if (DoAnyFilesExist(year, day) 
+					&& !AnsiConsole.Confirm(rewritePrompt, defaultValue: false))
 				{
-					AnsiConsole.MarkupLine($"[yellow]Skipping Year {year} Day {settings.Day}[/]");
+					AnsiConsole.MarkupInterpolated($"[yellow]Skipping Year {year} Day {settings.Day}[/]");
 					continue;
 				}
 
-				AnsiConsole.MarkupLine($@"Generating solution file in{'\t'} {solutionPath}\{year}");
-				AnsiConsole.MarkupLine($@"Generating data files in{'\t'} {dataPath}\{year}");
+				AnsiConsole.MarkupLine($@"[yellow]Generating solution file in{'\t'} {solutionPath}\{year}[/]");
+				AnsiConsole.MarkupLine($@"[yellow]Generating data files in{'\t'} {dataPath}\{year}[/]");
 				CreateInputFiles(year, day);
 			}
 

@@ -73,7 +73,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 					dayResult.PartOneResults.First().Answer :
 					dayResult.PartTwoResults.First().Answer;
 
-		AnsiConsole.MarkupLine("[yellow]Submitting input data...[/]");
+			AnsiConsole.MarkupLine("[yellow]Submitting input data...[/]");
 			HttpClient client = httpClientFactory.CreateClient();
 			var submitEndpoint = $"{settings.BaseUrl}/{settings.Year}/day/{settings.Day}/answer";
 			client.DefaultRequestHeaders.Add("cookie", $"session={runnerSettings.PersonalToken}");
@@ -128,7 +128,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 			else if (responseContent.Contains("You gave an answer too recently"))
 			{
 				var regex = new Regex("(You have ).*( left to wait.)");
-					
+
 				var timeToWaitMessage = regex.Match(responseContent).Groups[0].Value;
 
 				AnsiConsole.MarkupLine($"[red]You gave an answer too recently. {timeToWaitMessage}[/]");
@@ -149,7 +149,8 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 				return ValidationResult.Error("Part must be 1 or 2.");
 			}
 
-			return AoCHelper.ValidateDateNotTooEarly(settings);
+			//return AoCHelper.ValidateDateNotTooEarly(settings);
+			return ValidationResult.Success();
 		}
 	}
 }
