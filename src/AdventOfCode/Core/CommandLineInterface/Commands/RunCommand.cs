@@ -68,7 +68,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 
 			AnsiConsole.MarkupLine("[yellow]Running All Days[/]");
 
-			runner.Run(runnerSettings);
+			_ = runner.Run(runnerSettings);
 		}
 
 		private void RunSelectedDays(int[] daysToRun)
@@ -77,7 +77,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 
 			AnsiConsole.MarkupLine($"[yellow]Running Selected Days[/]: {string.Join(", ", daysToRun)}");
 
-			runner.Run(runnerSettings);
+			_ = runner.Run(runnerSettings);
 		}
 
 		private void ConfigureSettings(bool runAllDays)
@@ -117,7 +117,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 				return Enumerable.Empty<int>();
 			}
 
-			List<int> processedDays = new();
+			List<int> processedDays = [];
 			foreach (var day in daysToRun)
 			{
 				var isValidDay = day >= 1 && day <=25;

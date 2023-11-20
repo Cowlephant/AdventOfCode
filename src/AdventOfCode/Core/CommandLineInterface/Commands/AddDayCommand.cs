@@ -8,6 +8,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 	public sealed class AddDaySettings : CommandSettings
 	{
 		[CommandOption("-d|--day <DAY>")]
+		[Description("The day or days for which to create the files for.")]
 		public int[] Day { get; set; } = null!;
 
 		[CommandOption("-y|--year <YEAR>")]

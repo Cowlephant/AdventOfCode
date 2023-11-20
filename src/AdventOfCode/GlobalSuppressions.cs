@@ -5,3 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "Not desired", Scope = "module")]
+[assembly: SuppressMessage("Performance", "SYSLIB1045:Convert to 'GeneratedRegexAttribute'.", Justification = "Not desired", Scope = "module")]

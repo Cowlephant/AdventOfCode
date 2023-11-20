@@ -20,7 +20,7 @@ namespace AdventOfCode
 			stopwatch = new Stopwatch();
 		}
 
-		public void Run(AoCSettings? settings = null)
+		public IEnumerable<DayResult> Run(AoCSettings? settings = null)
 		{
 			// If passed in settings, use those instead of the ones configured at startup
 			if (settings is not null)
@@ -30,6 +30,8 @@ namespace AdventOfCode
 
 			IEnumerable<DayResult> results = RunDays();
 			resultsDisplay.Display(results);
+
+			return RunDays();
 		}
 
 		private List<DayResult> RunDays()
@@ -75,8 +77,8 @@ namespace AdventOfCode
 		private (IEnumerable<PartResult> PartOneResults, IEnumerable<PartResult> PartTwoResults)
 			RunParts(IAoCDaySolver daySolver)
 		{
-			List<PartResult> partOneResults = new();
-			List<PartResult> partTwoResults = new();
+			List<PartResult> partOneResults = [];
+			List<PartResult> partTwoResults = [];
 
 			var day = daySolver.GetType().GetCustomAttribute<AoCYearDayAttribute>()!.Day;
 			string dayName = $"Day{day:D2}";
@@ -138,7 +140,7 @@ namespace AdventOfCode
 		{
 			filteredDays ??= Enumerable.Empty<int>();
 			var daySolverType = typeof(IAoCDaySolver);
-			List<IAoCDaySolver> daysToRun = new();
+			List<IAoCDaySolver> daysToRun = [];
 
 			var allFilteredDays = daySolverType.Assembly.GetTypes()
 				.Where(type => daySolverType.IsAssignableFrom(type)

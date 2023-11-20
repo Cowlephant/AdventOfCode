@@ -3,7 +3,9 @@ using AdventOfCode.Core.CommandLineInterface;
 using AdventOfCode.Core.CommandLineInterface.Commands;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Http;
 using Spectre.Console.Cli;
 using System.CommandLine.Parsing;
 
@@ -25,6 +27,7 @@ namespace AdventOfCode
 				{
 					services
 						.AddHttpClient()
+						.RemoveAll<IHttpMessageHandlerBuilderFilter>()
 						.AddSingleton(serviceProvider =>
 						{
 							return builder.GetSection(nameof(AoCSettings)).Get<AoCSettings>()!;
@@ -111,11 +114,17 @@ namespace AdventOfCode
 					.WithExample("solve -y 2023 -p 1")
 					.WithExample("solve -y 2023 -p 2 --day 1");
 				config.AddCommand<InputCommand>("input")
-					.WithDescription("" +
-					"Downloads the input for given year, day and part from Advent of Code " +
-					"and adds it to the appropriate input file. This will overwrite existing data.\n\n" +
-					"[red]Be sure to use User Secrets or environment variables and do not commit any secrets.[/]")
+					.WithDescription("Downloads the input for given year, day and part from Advent of Code " +
+						"and adds it to the appropriate input file. This will overwrite existing data.\n\n" +
+						"[red]Be sure to use User Secrets or environment variables and do not commit any secrets.[/]")
 					.WithExample("input -y 2023 -d 1");
+				config.AddCommand<SubmitCommand>("submit")
+					.WithAlias("answer")
+					.WithDescription("Submits an answer for given year, day and part to Advent of Code. " +
+						"Will provide an appropriate response based on how the server responds to the request.\n\n" +
+						"[red]Be sure to use User Secrets or environment variables and do not commit any secrets.[/]")
+					.WithExample("submit -y 2023 -d 1 -p 1")
+					.WithExample("answer -y 2023 -d 20 -p 2");
 			});
 		}
 	}
