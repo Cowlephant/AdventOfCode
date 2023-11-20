@@ -136,7 +136,6 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 			else
 			{
 				AnsiConsole.MarkupLine($"[red]Received an unknown response from the server.[/]");
-				AnsiConsole.WriteLine(responseContent);
 			}
 
 			return 0;
@@ -149,8 +148,7 @@ namespace AdventOfCode.Core.CommandLineInterface.Commands
 				return ValidationResult.Error("Part must be 1 or 2.");
 			}
 
-			//return AoCHelper.ValidateDateNotTooEarly(settings);
-			return ValidationResult.Success();
+			return AoCHelper.ValidateDateNotTooEarly(settings);
 		}
 	}
 }
