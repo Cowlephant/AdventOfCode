@@ -31,7 +31,6 @@ internal sealed class InputCommand : AsyncCommand<HttpCommandSettings>
 			return 0;
 		}
 
-		AnsiConsole.MarkupLine("[yellow]Downloading input data...[/]");
 		HttpClient client = httpClientFactory.CreateClient();
 		var inputEndpoint = $"{settings.BaseUrl}/{settings.Year}/day/{settings.Day}/input";
 		client.DefaultRequestHeaders.Add("cookie", $"session={runnerSettings.PersonalToken}");

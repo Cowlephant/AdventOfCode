@@ -122,7 +122,21 @@ internal sealed class SubmitCommand : AsyncCommand<SubmitSettings>
 
 			var timeToWaitMessage = regex.Match(responseContent).Groups[0].Value;
 
-			AnsiConsole.MarkupLine($"[red]The answer you have submitted is incorrect... {timeToWaitMessage}[/]");
+			string tooHighTooLowMessage;
+			if (responseContent.Contains("your answer is too low"))
+			{
+				tooHighTooLowMessage = " and is too low";
+			}
+			else if (responseContent.Contains("your answer is too high"))
+			{
+				tooHighTooLowMessage = " and is too high";
+			}
+			else
+			{
+				tooHighTooLowMessage = "";
+			}
+
+			AnsiConsole.MarkupLine($"[red]The answer you have submitted is incorrect{tooHighTooLowMessage}... {timeToWaitMessage}[/]");
 		}
 		else if (responseContent.Contains("You gave an answer too recently"))
 		{
