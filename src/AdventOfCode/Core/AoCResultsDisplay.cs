@@ -113,7 +113,7 @@ internal sealed class AoCResultsDisplay
 
 		var resultStatus = partResult.AnswersMatch ? "[green]CORRECT[/]" : "[red]INCORRECT[/]";
 		resultStatus = isImplemented ? resultStatus : string.Empty;
-		var duration = isImplemented ? partResult.Duration : string.Empty;
+		var duration = isImplemented ? partResult.DurationFriendly : string.Empty;
 
 		if (settings.UseExampleData)
 		{

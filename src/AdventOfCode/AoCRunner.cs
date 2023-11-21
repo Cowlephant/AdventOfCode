@@ -118,10 +118,15 @@ internal sealed class AoCRunner
 			stopwatch.Stop();
 
 			var expectedAnswer = expectedAnswers.ElementAtOrDefault(index) ?? "?";
-			var duration = stopwatch.ElapsedTicks;
-			string durationFriendly = duration > 1000 ? $"{duration / 1000}ms" : $"{duration}μs";
+			var durationTicks = stopwatch.ElapsedTicks;
+			var durationFriendly = durationTicks switch
+			{
+				>= TimeSpan.TicksPerSecond => $"{(double)durationTicks / TimeSpan.TicksPerSecond:0.##}s",
+				>= TimeSpan.TicksPerMillisecond => $"{(double)durationTicks / TimeSpan.TicksPerMillisecond:0.##}ms",
+				_ => $"{(double)durationTicks / TimeSpan.TicksPerMicrosecond:0.##}μs"
+			};
 
-			var partResult = new PartResult(answer, expectedAnswer, answer == expectedAnswer, durationFriendly);
+			var partResult = new PartResult(answer, expectedAnswer, answer == expectedAnswer, stopwatch.Elapsed, durationFriendly);
 			partResults.Add(partResult);
 		}
 	}
