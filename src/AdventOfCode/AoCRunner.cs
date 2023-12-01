@@ -31,7 +31,7 @@ internal sealed class AoCRunner
 		IEnumerable<DayResult> results = RunDays();
 		resultsDisplay.Display(results);
 
-		return RunDays();
+		return results;
 	}
 
 	private List<DayResult> RunDays()
