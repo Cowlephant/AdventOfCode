@@ -1,4 +1,13 @@
 [part1]
-REPLACE ME WITH EXAMPLE DATA FOR PART 1 OF Day01. I CAN EVEN HAVE MULTIPLES OF THE SAME PART FOR MULTIPLE SETS OF DATA
+1abc2
+pqr3stu8vwx
+a1b2c3d4e5f
+treb7uchet
 [part2]
-REPLACE ME WITH EXAMPLE DATA FOR PART 2 OF Day01
+two1nine
+eightwothree
+abcone2threexyz
+xtwone3four
+4nineeightseven2
+zoneight234
+7pqrstsixteen

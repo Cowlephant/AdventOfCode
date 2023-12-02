@@ -1,0 +1,51 @@
+[
+  {
+    "Year": 2023,
+    "Days": [
+      {
+        "Day": 1,
+        "Part1": {
+          "Day": 1,
+          "Part": 1,
+          "IsSolved": true,
+          "CorrectAnswer": "54667",
+          "IncorrectAnswers": [],
+          "DurationTicks": 32936421,
+          "DurationFriendly": "3.29s"
+        },
+        "Part2": {
+          "Day": 1,
+          "Part": 2,
+          "IsSolved": true,
+          "CorrectAnswer": "54203",
+          "IncorrectAnswers": [],
+          "DurationTicks": 84922,
+          "DurationFriendly": "8.49ms"
+        }
+      },
+      {
+        "Day": 2,
+        "Part1": {
+          "Day": 2,
+          "Part": 1,
+          "IsSolved": true,
+          "CorrectAnswer": "2204",
+          "IncorrectAnswers": [
+            "332"
+          ],
+          "DurationTicks": 20462532,
+          "DurationFriendly": "2.05s"
+        },
+        "Part2": {
+          "Day": 2,
+          "Part": 2,
+          "IsSolved": true,
+          "CorrectAnswer": "71036",
+          "IncorrectAnswers": [],
+          "DurationTicks": 6894,
+          "DurationFriendly": "689.4\u03BCs"
+        }
+      }
+    ]
+  }
+]
