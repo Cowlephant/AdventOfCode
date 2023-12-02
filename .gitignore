@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 src/AdventOfCode/Data/
+!src/AdventOfCode/Data/**/*Results.json
