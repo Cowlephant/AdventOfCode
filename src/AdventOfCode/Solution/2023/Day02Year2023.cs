@@ -9,7 +9,7 @@ public sealed class Day02Year2023 : IAoCDaySolver
 	[AoCExpectedExampleAnswers("8")]
 	public string SolvePartOne(List<string> input)
 	{
-		int possibleGameIdCounts = 0;
+		var possibleGameIdSum = 0;
 
 		foreach (var line in input)
 		{
@@ -68,11 +68,11 @@ public sealed class Day02Year2023 : IAoCDaySolver
 
 			if (isGamePossible)
 			{
-				possibleGameIdCounts += gameIndex;
+				possibleGameIdSum += gameIndex;
 			}
 		}
 
-		return possibleGameIdCounts.ToString();
+		return possibleGameIdSum.ToString();
 	}
 
 	[AoCExpectedExampleAnswers("2286")]
