@@ -122,12 +122,11 @@ public sealed class Day03Year2023 : IAoCDaySolver
 		var previousEnginePartMatches = enginePartRegex.Matches(previousSchematicRow);
 		var currentEnginePartMatches = enginePartRegex.Matches(currentSchematicRow);
 		var nextEnginepartMatches = enginePartRegex.Matches(nextSchematicRow);
-		var schematicRowLength = currentSchematicRow.Length;
 
 		List<int> partNumbers = [];
-		partNumbers.AddRange(GetAdjacentPartNumbers(previousEnginePartMatches, gearMatch.Index, schematicRowLength));
-		partNumbers.AddRange(GetAdjacentPartNumbers(currentEnginePartMatches, gearMatch.Index, schematicRowLength));
-		partNumbers.AddRange(GetAdjacentPartNumbers(nextEnginepartMatches, gearMatch.Index, schematicRowLength));
+		partNumbers.AddRange(GetAdjacentPartNumbers(previousEnginePartMatches, gearMatch.Index));
+		partNumbers.AddRange(GetAdjacentPartNumbers(currentEnginePartMatches, gearMatch.Index));
+		partNumbers.AddRange(GetAdjacentPartNumbers(nextEnginepartMatches, gearMatch.Index));
 
 		if (partNumbers.Count == 2)
 		{
@@ -138,7 +137,7 @@ public sealed class Day03Year2023 : IAoCDaySolver
 		return 0;
 	}
 
-	private List<int> GetAdjacentPartNumbers(MatchCollection matches, int gearIndex, int schematicRowLength)
+	private List<int> GetAdjacentPartNumbers(MatchCollection matches, int gearIndex)
 	{
 		List<int> partNumbers = matches
 			.Where(
