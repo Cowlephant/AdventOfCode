@@ -58,6 +58,8 @@ public sealed class Day04Year2023 : IAoCDaySolver
 
 			var timesToProcess = cardsTimesToProcess[cardNumber];
 
+			var totalToAdd = 0;
+
 			for (int i = 0; i <= timesToProcess; i++)
 			{
 				for (int j = 1; j <= matchingNumberCount; j++)
@@ -65,13 +67,10 @@ public sealed class Day04Year2023 : IAoCDaySolver
 					cardsTimesToProcess[cardNumber + j]++;
 				}
 
-				if (i > 0)
-				{
-					totalScratchCards++;
-				}
+				totalToAdd++;
 			}
 
-			totalScratchCards++;
+			totalScratchCards += totalToAdd;
 		}
 
 		return totalScratchCards.ToString();
