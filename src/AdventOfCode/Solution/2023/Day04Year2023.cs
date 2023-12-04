@@ -24,20 +24,7 @@ public sealed class Day04Year2023 : IAoCDaySolver
 			var winningChosenNumbersCount = numbersChosen
 				.Count(n => winningNumbers.Contains(n));
 
-			var cardPoints = 0;
-			for (int i = 0; i < winningChosenNumbersCount; i++)
-			{
-				if (i == 0)
-				{
-					cardPoints++;
-				}
-				else
-				{
-					cardPoints *= 2;
-				}
-			}
-
-			totalCardPoints += cardPoints;
+			totalCardPoints += (int)Math.Pow(winningChosenNumbersCount - 1, 2);
 		}
 
 		return totalCardPoints.ToString();
