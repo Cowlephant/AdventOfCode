@@ -166,8 +166,6 @@ public sealed class Day05Year2023 : IAoCDaySolver
 		return lowestLocationValue.ToString();
 	}
 
-	private static readonly object lockObject = new();
-
 	private void ProcessSeedRange(
 		List<List<ConversionMap>> conversionMaps,
 		uint newRangeStart,
@@ -189,13 +187,9 @@ public sealed class Day05Year2023 : IAoCDaySolver
 
 		if (seedMappedValue < lowestLocationValue)
 		{
-			// Prevent deadlock
-			lock (lockObject)
-			{
-				lowestLocationValue = seedMappedValue;
-				lowestLocationSeed = centerSeedToTry;
-				Console.WriteLine($"Found lower location value: {lowestLocationValue}");
-			}
+			lowestLocationValue = seedMappedValue;
+			lowestLocationSeed = centerSeedToTry;
+			Console.WriteLine($"Found lower location value: {lowestLocationValue}");
 		}
 
 		if (newRangeEnd - newRangeStart >= 100)
