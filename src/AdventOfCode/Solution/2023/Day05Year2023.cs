@@ -15,7 +15,6 @@ public sealed class Day05Year2023 : IAoCDaySolver
 			.Select(uint.Parse)
 			.ToList();
 
-		// Remove seeds row
 		List<List<ConversionMap>> conversionMaps = string.Join("\n", input)
 			.Split("\n\n") // Split each map from each other
 			.Skip(1) // Disregard the seeds numbers
@@ -74,7 +73,6 @@ public sealed class Day05Year2023 : IAoCDaySolver
 			.Select(s => new SeedRange(s[0], s[0] + s[1] - 1, s[1]))
 			.ToList();
 
-		// Remove seeds row
 		List<List<ConversionMap>> conversionMaps = string.Join("\n", input)
 		   .Split("\n\n") // Split each map from each other
 		   .Skip(1) // Disregard the seeds numbers
