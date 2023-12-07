@@ -87,6 +87,29 @@
           "DurationTicks": 1176616,
           "DurationFriendly": "117.66ms"
         }
+      },
+      {
+        "Day": 5,
+        "Part1": {
+          "Day": 5,
+          "Part": 1,
+          "IsSolved": true,
+          "CorrectAnswer": "836040384",
+          "IncorrectAnswers": [],
+          "DurationTicks": 71421,
+          "DurationFriendly": "7.14ms"
+        },
+        "Part2": {
+          "Day": 5,
+          "Part": 2,
+          "IsSolved": true,
+          "CorrectAnswer": "10834440",
+          "IncorrectAnswers": [
+            "10834466"
+          ],
+          "DurationTicks": 501058321,
+          "DurationFriendly": "50.11s"
+        }
       }
     ]
   }
