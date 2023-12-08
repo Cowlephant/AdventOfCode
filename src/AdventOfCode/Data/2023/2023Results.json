@@ -131,6 +131,34 @@
           "DurationTicks": 26055951,
           "DurationFriendly": "2.61s"
         }
+      },
+      {
+        "Day": 7,
+        "Part1": {
+          "Day": 7,
+          "Part": 1,
+          "IsSolved": true,
+          "CorrectAnswer": "252295678",
+          "IncorrectAnswers": [
+            "252286949",
+            "253806028",
+            "254038707"
+          ],
+          "DurationTicks": 23541724,
+          "DurationFriendly": "2.35s"
+        },
+        "Part2": {
+          "Day": 7,
+          "Part": 2,
+          "IsSolved": true,
+          "CorrectAnswer": "250577259",
+          "IncorrectAnswers": [
+            "250609761",
+            "250579616"
+          ],
+          "DurationTicks": 35632852,
+          "DurationFriendly": "3.56s"
+        }
       }
     ]
   }
