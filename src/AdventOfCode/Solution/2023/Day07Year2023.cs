@@ -88,8 +88,7 @@ public sealed class Day07Year2023 : IAoCDaySolver
 			int jokerCounts = handCopy.Count(c => c == 'J');
 			if (!IsPartOne && jokerCounts == 5)
 			{
-				// Five of a kind!
-				return 7;
+				return (int)CardHand.FiveOfKind;
 			}
 
 			foreach (char card in Hand)
@@ -160,14 +159,14 @@ public sealed class Day07Year2023 : IAoCDaySolver
 
 			int handRank = 0;
 
-			if (fiveOfKinds == 1) handRank = 7;			// Five of kind
-			else if (fourOfKinds == 1) handRank = 6;	// Four of kind
-			else if (threeOfKinds == 1                  // Full house
-				&& twoOfKinds == 1) handRank = 5;
-			else if (threeOfKinds == 1) handRank = 4;	// Three of a kind
-			else if (twoOfKinds == 2) handRank = 3;		// Two pair
-			else if (twoOfKinds == 1) handRank = 2;		// One pair
-			else handRank = 1;							// High card
+			if (fiveOfKinds == 1) handRank = (int)CardHand.FiveOfKind;			// Five of kind
+			else if (fourOfKinds == 1) handRank = (int)CardHand.FourOfKind;		// Four of kind
+			else if (threeOfKinds == 1
+				&& twoOfKinds == 1) handRank = (int)CardHand.FullHouse;         // Full house
+			else if (threeOfKinds == 1) handRank = (int)CardHand.ThreeOfKind;	// Three of a kind
+			else if (twoOfKinds == 2) handRank = (int)CardHand.TwoPair;			// Two pair
+			else if (twoOfKinds == 1) handRank = (int)CardHand.OnePair;			// One pair
+			else handRank = (int)CardHand.HighCard;								// High card
 
 			return handRank;
 		}
